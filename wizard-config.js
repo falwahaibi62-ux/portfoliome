@@ -43,8 +43,9 @@ window.QM_WIZARD_DEFAULTS = {
   commonEn: ['Arabic & English', 'Designed in your brand', 'Works on phone and desktop'],
   usersAr: ['أنا فقط أو صاحب المشروع', 'فريق صغير (2–10 أشخاص)', 'مؤسسة (أكثر من 10)', 'عملاء من الجمهور'],
   usersEn: ['Just me / the owner', 'Small team (2–10 people)', 'Organisation (10+)', 'Members of the public'],
-  budgetsAr: ['أقل من 500 ر.ع', '500 – 1,500 ر.ع', '1,500 – 4,000 ر.ع', 'أكثر من 4,000 ر.ع', 'لم أحدد بعد'],
-  budgetsEn: ['Under OMR 500', 'OMR 500 – 1,500', 'OMR 1,500 – 4,000', 'Over OMR 4,000', 'Not decided yet'],
+  // «أين أنت الآن؟» — بديل سؤال الميزانية
+  stagesAr: ['فكرة فقط، وأحتاج من يساعدني في تحديدها', 'أعمل حالياً على الورق أو Excel', 'عندي نظام أو موقع وأريد تطويره أو استبداله', 'عندي تصوّر أو تصميم جاهز'],
+  stagesEn: ['Just an idea, I need help shaping it', 'We currently use paper or Excel', 'We have a system or website to improve or replace', 'I have a clear brief or design ready'],
   timesAr: ['خلال شهر', 'خلال 1–3 أشهر', 'الموعد مرن'],
   timesEn: ['Within a month', 'Within 1–3 months', 'Flexible']
 };

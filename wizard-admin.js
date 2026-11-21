@@ -1,13 +1,13 @@
 /* wizard-admin.js — قسم «استمارة ابدأ مشروعك» في لوحة التحكم
-   يعدّل المدة التقديرية والمهام لكل نوع تطبيق، ونطاقات الميزانية. يُحفظ في settings/wizard. */
+   يعدّل المدة التقديرية والمهام لكل نوع تطبيق، وخيارات «أين أنت الآن؟». يُحفظ في settings/wizard. */
 window.QMWizardAdmin = function (host) {
   'use strict';
   var D = window.QM_WIZARD_DEFAULTS;
   var TX = {
     ar: { title: 'استمارة «ابدأ مشروعك»', hint: 'عدّلي المدة التقديرية والمهام التي تظهر للعميل لكل نوع تطبيق. اكتبي كل مهمة في سطر.', open: 'فتح الاستمارة',
-      dur: 'المدة التقديرية', feat: 'المهام', ar: '(عربي)', en: '(English)', budgets: 'نطاقات الميزانية', save: 'حفظ الاستمارة', saving: 'جارٍ الحفظ…', saved: 'تم الحفظ، والاستمارة تحدّثت.', fail: 'تعذّر الحفظ. حاولي مرة أخرى.', reset: 'استرجاع الافتراضي' },
+      dur: 'المدة التقديرية', feat: 'المهام', ar: '(عربي)', en: '(English)', budgets: 'خيارات «أين أنت الآن؟»', save: 'حفظ الاستمارة', saving: 'جارٍ الحفظ…', saved: 'تم الحفظ، والاستمارة تحدّثت.', fail: 'تعذّر الحفظ. حاولي مرة أخرى.', reset: 'استرجاع الافتراضي' },
     en: { title: '“Start your project” form', hint: 'Edit the estimated time and the features clients see for each app type. One feature per line.', open: 'Open the form',
-      dur: 'Estimated time', feat: 'Features', ar: '(Arabic)', en: '(English)', budgets: 'Budget ranges', save: 'Save form', saving: 'Saving…', saved: 'Saved. The form is updated.', fail: 'Could not save. Please try again.', reset: 'Restore defaults' }
+      dur: 'Estimated time', feat: 'Features', ar: '(Arabic)', en: '(English)', budgets: '“Where are you now?” options', save: 'Save form', saving: 'Saving…', saved: 'Saved. The form is updated.', fail: 'Could not save. Please try again.', reset: 'Restore defaults' }
   };
   var state = null, db = null, msg = '', msgOk = true, busy = false;
   var lang = function () { var r = document.querySelector('#app > div'); return r && r.getAttribute('lang') === 'en' ? 'en' : 'ar'; };
@@ -20,8 +20,8 @@ window.QMWizardAdmin = function (host) {
       o = Object.assign({}, t, o || {});
       return { id: t.id, ar: t.ar, en: t.en, durationAr: o.durationAr, durationEn: o.durationEn, featuresAr: (o.featuresAr || []).join('\n'), featuresEn: (o.featuresEn || []).join('\n') };
     }) };
-    st.budgetsAr = ((w && w.budgetsAr) || D.budgetsAr).join('\n');
-    st.budgetsEn = ((w && w.budgetsEn) || D.budgetsEn).join('\n');
+    st.stagesAr = ((w && w.stagesAr) || D.stagesAr).join('\n');
+    st.stagesEn = ((w && w.stagesEn) || D.stagesEn).join('\n');
     return st;
   }
 
@@ -48,8 +48,8 @@ window.QMWizardAdmin = function (host) {
         '</div></details>';
     });
     h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">' +
-      '<label style="' + lab + '">' + esc(L.budgets + ' ' + L.ar) + '<textarea data-k="budgetsAr" style="' + ta + '" dir="rtl">' + esc(state.budgetsAr) + '</textarea></label>' +
-      '<label style="' + lab + '">' + esc(L.budgets + ' ' + L.en) + '<textarea data-k="budgetsEn" style="' + ta + '" dir="ltr">' + esc(state.budgetsEn) + '</textarea></label></div>' +
+      '<label style="' + lab + '">' + esc(L.budgets + ' ' + L.ar) + '<textarea data-k="stagesAr" style="' + ta + '" dir="rtl">' + esc(state.stagesAr) + '</textarea></label>' +
+      '<label style="' + lab + '">' + esc(L.budgets + ' ' + L.en) + '<textarea data-k="stagesEn" style="' + ta + '" dir="ltr">' + esc(state.stagesEn) + '</textarea></label></div>' +
       '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">' +
       '<button type="button" id="wzSave" style="min-height:44px;padding:0 22px;border-radius:14px;border:none;background:#1C1633;color:#fff;font:inherit;font-weight:700;font-size:14px;cursor:pointer"' + (busy ? ' disabled' : '') + '>' + esc(busy ? L.saving : L.save) + '</button>' +
       '<button type="button" id="wzReset" style="min-height:44px;padding:0 18px;border-radius:14px;border:1px solid #D8D1EE;background:#fff;color:#1C1633;font:inherit;font-weight:600;font-size:14px;cursor:pointer">' + esc(L.reset) + '</button>' +
@@ -68,7 +68,7 @@ window.QMWizardAdmin = function (host) {
     busy = true; msg = ''; render();
     var data = {
       types: state.types.map(function (t) { return { id: t.id, durationAr: t.durationAr.trim(), durationEn: t.durationEn.trim(), featuresAr: lines(t.featuresAr), featuresEn: lines(t.featuresEn) }; }),
-      budgetsAr: lines(state.budgetsAr), budgetsEn: lines(state.budgetsEn), updatedAt: new Date().toISOString()
+      stagesAr: lines(state.stagesAr), stagesEn: lines(state.stagesEn), updatedAt: new Date().toISOString()
     };
     db.doc('settings/wizard').set(data).then(function () { busy = false; msg = L.saved; msgOk = true; render(); },
       function () { busy = false; msg = L.fail; msgOk = false; render(); });
