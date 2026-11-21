@@ -38,6 +38,129 @@
       "inProgress": 4,
       "study": 8,
       "updatedAt": "2026-11-21T13:03:38.043Z"
+    },
+    "wizard": {
+      "types": [
+        {
+          "id": "web",
+          "durationAr": "1–2 أسبوع",
+          "durationEn": "1–2 weeks",
+          "featuresAr": [
+            "صفحات تعريفية",
+            "نموذج تواصل وطلبات",
+            "معرض أعمال وصور",
+            "زر واتساب مباشر",
+            "لوحة تحكم لتحديث المحتوى",
+            "تحسين الظهور في محركات البحث"
+          ],
+          "featuresEn": [
+            "About & service pages",
+            "Contact & request form",
+            "Work & photo gallery",
+            "Direct WhatsApp button",
+            "Admin panel to update content",
+            "Search engine optimisation"
+          ]
+        },
+        {
+          "id": "workflow",
+          "durationAr": "4–8 أسابيع",
+          "durationEn": "4–8 weeks",
+          "featuresAr": [
+            "مسار موافقات متعدد المراحل",
+            "صلاحيات مستخدمين (مدير، موظف، مشاهد)",
+            "إرفاق ملفات PDF وصور",
+            "إشعارات بالبريد أو واتساب",
+            "سجل التعديلات (من غيّر ماذا ومتى)",
+            "نسخ احتياطي للبيانات"
+          ],
+          "featuresEn": [
+            "Multi-step approvals",
+            "User roles (admin, staff, viewer)",
+            "PDF & photo attachments",
+            "Email or WhatsApp notifications",
+            "Audit log (who changed what, when)",
+            "Data backup"
+          ]
+        },
+        {
+          "id": "reports",
+          "durationAr": "2–4 أسابيع",
+          "durationEn": "2–4 weeks",
+          "featuresAr": [
+            "مؤشرات أداء رئيسية",
+            "تقارير إجمالية وتفصيلية",
+            "تصدير PDF وExcel",
+            "فلترة حسب الفترة والقسم",
+            "رسوم بيانية",
+            "استيراد البيانات من Excel"
+          ],
+          "featuresEn": [
+            "Key performance indicators",
+            "Summary & detailed reports",
+            "PDF & Excel export",
+            "Filters by period and department",
+            "Charts",
+            "Import data from Excel"
+          ]
+        },
+        {
+          "id": "store",
+          "durationAr": "3–6 أسابيع",
+          "durationEn": "3–6 weeks",
+          "featuresAr": [
+            "عرض المنتجات والأسعار",
+            "سلة وطلبات",
+            "دفع إلكتروني",
+            "إدارة المخزون",
+            "فواتير وإيصالات",
+            "عروض وخصومات"
+          ],
+          "featuresEn": [
+            "Products & prices",
+            "Cart & orders",
+            "Online payment",
+            "Stock management",
+            "Invoices & receipts",
+            "Offers & discounts"
+          ]
+        },
+        {
+          "id": "mobile",
+          "durationAr": "6–10 أسابيع",
+          "durationEn": "6–10 weeks",
+          "featuresAr": [
+            "تسجيل دخول للمستخدمين",
+            "إشعارات فورية",
+            "العمل بدون إنترنت",
+            "الكاميرا ورفع الصور",
+            "الموقع على الخريطة",
+            "لوحة تحكم للإدارة"
+          ],
+          "featuresEn": [
+            "User login",
+            "Push notifications",
+            "Works offline",
+            "Camera & photo upload",
+            "Location on map",
+            "Admin dashboard"
+          ]
+        }
+      ],
+      "formKey": "b37b29a7-5b29-4971-9680-14e2aa58f75e",
+      "stagesAr": [
+        "فكرة فقط، وأحتاج من يساعدني في تحديدها",
+        "أعمل حالياً على الورق أو Excel",
+        "عندي نظام أو موقع وأريد تطويره أو استبداله",
+        "عندي تصوّر أو تصميم جاهز"
+      ],
+      "stagesEn": [
+        "Just an idea, I need help shaping it",
+        "We currently use paper or Excel",
+        "We have a system or website to improve or replace",
+        "I have a clear brief or design ready"
+      ],
+      "updatedAt": "2026-11-21T14:52:18.517Z"
     }
   }
 }
