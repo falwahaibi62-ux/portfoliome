@@ -10,6 +10,12 @@
         }
       ],
       "updatedAt": "2026-11-21T12:56:13.891Z"
+    },
+    "stats": {
+      "completed": 2,
+      "inProgress": 4,
+      "study": 8,
+      "updatedAt": "2026-11-21T13:03:38.043Z"
     }
   }
 }
