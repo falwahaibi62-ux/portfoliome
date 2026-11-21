@@ -7,7 +7,7 @@
       "subEn": "Storage, Moving & Distribution",
       "problemAr": "كانت عمليات النقل والتخزين تُدار يدوياً بين ملفات PDF وجداول متفرقة. كان صعباً متابعة كل مهمة ومصاريفها (الديزل والفندق والمستودع وتأجير الشاحنات)، ومعرفة الإيراد الفعلي لكل فترة. وكانت الأرقام تتكرر أحياناً، والمستندات تضيع بين الملفات.",
       "problemEn": "Moving and storage operations were managed by hand across PDF files and scattered spreadsheets. It was hard to track each job and its expenses (diesel, hotel, warehouse and truck rental) and to see the real revenue for any period. Job numbers were sometimes duplicated, and documents got lost between files.",
-      "solutionAr": "ظام ويب خاص بالشركة يجمع العمليات في مكان واحد:\n\nسجل للمهام بأرقام لا تتكرر، مع ملصق اللوت ولونه لكل مهمة.\nإرفاق ملف PDF لكل مهمة، ومنع المستندات المكررة.\nتسجيل المصاريف بأكثر من طريقة دفع للبند الواحد.\nلوحة إحصاءات وتقارير PDF رسمية حسب أي فترة.\nصلاحيات مستخدمين (مدير، عضو، مشاهد)، وسلة محذوفات، ونسخ احتياطي للبيانات.",
+      "solutionAr": "نظام ويب خاص بالشركة يجمع العمليات في مكان واحد:\n\nسجل للمهام بأرقام لا تتكرر، مع ملصق اللوت ولونه لكل مهمة.\nإرفاق ملف PDF لكل مهمة، ومنع المستندات المكررة.\nتسجيل المصاريف بأكثر من طريقة دفع للبند الواحد.\nلوحة إحصاءات وتقارير PDF رسمية حسب أي فترة.\nصلاحيات مستخدمين (مدير، عضو، مشاهد)، وسلة محذوفات، ونسخ احتياطي للبيانات.",
       "solutionEn": "A private web system that brings all operations into one place:\n\nA job ledger with unique job numbers, plus each job's lot sticker code and colour.\nOne PDF attachment per job, with duplicate documents blocked.\nExpense tracking with several payment methods per item.\nA dashboard and formal PDF reports for any date range.\nUser roles (Admin, Member, Viewer), a recycle bin and data backup.",
       "resultAr": "صارت كل مهمة ومستنداتها ومصاريفها في مكان واحد. تظهر الإيرادات والمصاريف لأي فترة بضغطة، ويستلم المدير تقارير جاهزة للطباعة بدل تجميع الأرقام يدوياً. والبيانات محمية بصلاحيات واضحة ونسخ احتياطي.",
       "resultEn": "Every job, its documents and its expenses now live in one place. Revenue and expenses for any period are one click away, and management gets print-ready reports instead of adding up numbers by hand. The data is protected with clear roles and backups.",
@@ -19,7 +19,7 @@
       "order": 1,
       "image": "images/97f9d481-ae1b-4ebf-ae29-31e917992b45.png",
       "visible": true,
-      "updatedAt": "2026-11-21T13:03:42.540Z"
+      "updatedAt": "2026-11-21T16:37:47.286Z"
     }
   },
   "settings": {
