@@ -55,6 +55,7 @@
 
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
   .opt{position:relative;text-align:start;display:flex;gap:12px;align-items:flex-start;min-height:64px;padding:16px;border-radius:20px;border:1.5px solid var(--line);background:#fff;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+  .opt[data-v=unsure]{grid-column:1/-1}
   .opt:hover{border-color:var(--lav);transform:translateY(-2px)}
   .opt[aria-pressed=true],.opt[aria-checked=true]{border-color:var(--violet);background:#F6F3FF}
   .opt .ic{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(143,184,255,.35),rgba(240,139,216,.3));color:var(--navy)}
@@ -161,7 +162,7 @@
       needType: 'اختر نوع التطبيق للمتابعة.', needUsers: 'اختر من سيستخدم التطبيق.', needName: 'اكتب اسمك.', needPhone: 'رقم الجوال العُماني 8 أرقام ويبدأ بـ 7 أو 9، أو اتركه فارغاً.',
       sumBadge: 'ملخص طلبك', sumTitle: 'جاهز للإرسال', estimate: 'المدة التقديرية للتنفيذ', estUnsure: 'تتحدد بعد الحديث معك',
       rType: 'نوع التطبيق', rFeatures: 'المهام', rMore: 'تفاصيل إضافية', rUsers: 'المستخدمون', rBudget: 'الوضع الحالي', rTime: 'موعد البدء', rName: 'الاسم', rMobile: 'الجوال', rEmail: 'البريد', rOrg: 'الجهة',
-      estNote: 'المدة تقديرية حسب اختياراتك، وتتحدد بدقة بعد مكالمة قصيرة نفهم فيها عملك.',
+      estNote: 'المدة تقديرية حسب اختياراتك، وتتحدد بدقة بعد مكالمة قصيرة نفهم فيها عملك.', estNoteMail: 'المدة تقديرية حسب اختياراتك، وتتحدد بدقة بعد تواصل قصير نفهم فيه عملك.',
       send: 'إرسال الطلب', sending: 'جارٍ الإرسال…', sendWa: 'إرسال عبر واتساب', edit: 'تعديل الاختيارات',
       termsLink: 'الشروط والخصوصية', agree: 'بإرسال الطلب توافق على',
       privacy: 'يصل طلبك إلى بريدنا مباشرة، ولا يُحفظ في الموقع.', privacyWa: 'يُرسل طلبك من جوالك عبر واتساب، ولا يُحفظ في الموقع.',
@@ -181,7 +182,7 @@
       needType: 'Choose a type of app to continue.', needUsers: 'Choose who will use the app.', needName: 'Enter your name.', needPhone: 'Omani mobile numbers have 8 digits and start with 7 or 9, or leave it empty.',
       sumBadge: 'Your request', sumTitle: 'Ready to send', estimate: 'Estimated build time', estUnsure: 'Set after we talk',
       rType: 'Type of app', rFeatures: 'Features', rMore: 'More details', rUsers: 'Users', rBudget: 'Current setup', rTime: 'Start', rName: 'Name', rMobile: 'Mobile', rEmail: 'Email', rOrg: 'Organisation',
-      estNote: 'The timeline is an estimate based on your choices and is confirmed after a short call about your work.',
+      estNote: 'The timeline is an estimate based on your choices and is confirmed after a short call about your work.', estNoteMail: 'The timeline is an estimate based on your choices and is confirmed after a short exchange about your work.',
       send: 'Send', sending: 'Sending…', sendWa: 'Send on WhatsApp', edit: 'Edit choices',
       termsLink: 'Terms & privacy', agree: 'By sending, you agree to the',
       privacy: 'Your request goes straight to our inbox and is not stored on this site.', privacyWa: 'Your request is sent from your phone through WhatsApp and is not stored on this site.',
@@ -196,10 +197,11 @@
     chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
     bag: '<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
     phone: '<rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 18h2"/>',
+    book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13"/><path d="M9 7h6"/>',
     spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>'
   };
 
-  var D = window.QM_WIZARD_DEFAULTS, W = JSON.parse(JSON.stringify(D)), waNumber = '', ourEmail = '', formKey = '', sending = false;
+  var D = window.QM_WIZARD_DEFAULTS, W = JSON.parse(JSON.stringify(D)), waNumber = '', ourEmail = '', formKey = '', saveUrl = '', sending = false;
   var lang = 'ar'; try { if (localStorage.getItem('qm-pf-lang') === 'en') lang = 'en'; } catch (e) {}
   var S = { step: 1, type: '', features: [], more: '', users: '', budget: '', time: '', name: '', phone: '', email: '', org: '', pref: '' };
   var TOTAL = 5;
@@ -217,6 +219,7 @@
       W.types = D.types.map(function (t) { var o = w.types.filter(function (x) { return x.id === t.id; })[0]; return o ? Object.assign({}, t, o) : t; });
       ['stagesAr', 'stagesEn'].forEach(function (k) { if (Array.isArray(w[k]) && w[k].length) W[k] = w[k]; });
     }
+    if (w && typeof w.saveUrl === 'string' && /^https:\/\//.test(w.saveUrl.trim())) saveUrl = w.saveUrl.trim();
     if (w && typeof w.formKey === 'string') { formKey = w.formKey.trim();
     }
     var items = d.settings.contact && Array.isArray(d.settings.contact.items) ? d.settings.contact.items : [];
@@ -307,12 +310,12 @@
     return '<div class="sum-head"><span class="badge">' + esc(l.sumBadge) + '</span><h2 style="margin:0;font-size:26px">' + esc(l.sumTitle) + '</h2>' +
       '<div><span class="est"><small>' + esc(l.estimate) + '</small><b dir="auto">' + esc(est || l.estUnsure) + '</b></span></div></div>' +
       '<dl class="sum">' + summaryRows().map(function (r) { return '<div class="row"><dt>' + esc(r[0]) + '</dt><dd dir="auto">' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' +
-      '<p class="note">' + esc(l.estNote) + (S.features.length > 7 ? ' ' + esc(l.manyNote) : '') + '</p>' +
+      '<p class="note">' + esc(S.pref === 'email' ? l.estNoteMail : l.estNote) + (S.features.length > 7 ? ' ' + esc(l.manyNote) : '') + '</p>' +
       '<div class="err" id="err" role="alert"></div>' +
       '<div class="actions"><button type="button" class="btn ghost" id="editBtn">' + esc(l.edit) + '</button>' +
-      (formKey ? '<button type="button" class="btn" id="sendBtn"' + (sending ? ' disabled' : '') + '>' + esc(sending ? l.sending : l.send) + '</button>'
+      (formKey || saveUrl ? '<button type="button" class="btn" id="sendBtn"' + (sending ? ' disabled' : '') + '>' + esc(sending ? l.sending : l.send) + '</button>'
         : waNumber ? '<a class="btn wa" id="waBtn" target="_blank" rel="noopener" href="' + esc(waLink()) + '">' + esc(l.sendWa) + '</a>' : '') + '</div>' +
-      '<p class="note">' + (formKey || waNumber ? esc(formKey ? l.privacy : l.privacyWa) + ' ' + esc(l.agree) + ' <a href="terms.html" target="_blank" rel="noopener">' + esc(l.termsLink) + '</a>.' : esc(l.noSend)) + '</p>';
+      '<p class="note">' + (formKey || saveUrl || waNumber ? esc(formKey || saveUrl ? l.privacy : l.privacyWa) + ' ' + esc(l.agree) + ' <a href="terms.html" target="_blank" rel="noopener">' + esc(l.termsLink) + '</a>.' : esc(l.noSend)) + '</p>';
   }
   function messageText() {
     var l = L(), est = estimate();
@@ -367,14 +370,27 @@
     if ($('sendBtn')) $('sendBtn').onclick = send;
   }
   function send() {
-    if (sending || !formKey) return;
-    var l = L(); sending = true; render();
-    fetch('https://api.web3forms.com/submit', {
+    if (sending || !(formKey || saveUrl)) return;
+    var l = L(), t = typeOf(S.type); sending = true; render();
+    var ok = function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.success) throw new Error('fail'); return true; }); };
+    var jobs = [];
+    // 1) إلى البريد عبر Web3Forms
+    if (formKey) jobs.push(fetch('https://api.web3forms.com/submit', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ access_key: formKey, subject: l.subject + ' — ' + S.name, from_name: S.name, name: S.name, phone: S.phone ? '+968 ' + S.phone : undefined, email: S.email || undefined, message: messageText(), botcheck: '' })
-    }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.success) throw new Error('fail'); }); })
-      .then(function () { sending = false; S.step = 7; render(); top(); },
-        function () { sending = false; render(); var e = $('err'); if (e) e.textContent = l.sendFail; });
+    }).then(ok));
+    // 2) إلى جدول الطلبات في لوحة التحكم (عبر الخادم الصغير)
+    if (saveUrl) jobs.push(fetch(saveUrl, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: S.name, phone: S.phone ? '+968 ' + S.phone : '', email: S.email, org: S.org, type: t ? t[lang] : '', features: S.features.join('، '), more: S.more,
+        users: S.users, stage: S.budget, time: S.time, estimate: estimate(), pref: S.pref ? l.prefs[S.pref] : '', lang: lang, botcheck: '' })
+    }).then(ok));
+    // ينجح الإرسال إذا وصل الطلب لأحد الطريقين على الأقل
+    Promise.all(jobs.map(function (j) { return j.then(function () { return true; }, function () { return false; }); })).then(function (res) {
+      sending = false;
+      if (res.indexOf(true) >= 0) { S.step = 7; render(); top(); }
+      else { render(); var e = $('err'); if (e) e.textContent = l.sendFail; }
+    });
   }
   function top() { var c = document.querySelector('.card'); if (c && c.getBoundingClientRect().top < 0) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
