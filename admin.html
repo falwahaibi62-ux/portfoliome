@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة التحكم</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap">
+<style>
+body{margin:0;background:#F7F5FC}
+a{color:#6B4FD8;text-decoration:none}a:hover{color:#1C1633}
+input,textarea,select{font-family:inherit}
+</style>
+<style>#app{min-height:100vh}</style>
+<meta name="robots" content="noindex, nofollow">
+<script>window.QM_REQUIRE_LOGIN = true;</script>
+<script src="config.js"></script>
+<script src="qm-store.js"></script>
+<script src="qm-dc.js"></script>
+</head>
+<body>
+<style>
+  [hidden]{display:none!important}
+  .qm-login{min-height:100vh;display:grid;place-items:center;padding:24px;box-sizing:border-box;background:radial-gradient(60% 50% at 80% 10%,rgba(240,139,216,.18),transparent 70%),radial-gradient(55% 55% at 10% 90%,rgba(143,184,255,.2),transparent 70%),#F7F5FC;font-family:'Tajawal',Tahoma,sans-serif;color:#1C1633}
+  .qm-card{width:100%;max-width:400px;background:#fff;border:1px solid #E6E1F5;border-radius:28px;padding:30px;display:grid;gap:14px;box-shadow:0 24px 60px -28px rgba(107,79,216,.45)}
+  .qm-card h1{margin:0;font-size:24px;font-weight:900}
+  .qm-card p{margin:0;color:#4A4560;font-size:14px;line-height:1.7}
+  .qm-card label{display:grid;gap:6px;font-size:13px;font-weight:700}
+  .qm-card input{min-height:46px;padding:0 14px;border-radius:14px;border:1px solid #D8D1EE;background:#FBFAFE;font:inherit;font-size:15px;color:#1C1633}
+  .qm-card input:focus{outline:3px solid #B8B2FF;outline-offset:1px}
+  .qm-btn{min-height:48px;border:0;border-radius:999px;background:#1C1633;color:#fff;font:inherit;font-weight:700;font-size:15px;cursor:pointer}
+  .qm-btn:disabled{opacity:.6}
+  .qm-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .qm-brand{display:flex;align-items:center;gap:10px}
+  .qm-lang{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid #E6E1F5;background:#fff;color:#1C1633;font:inherit;font-weight:600;cursor:pointer}
+  .qm-link{background:none;border:0;padding:0;color:#6B4FD8;font:inherit;font-size:14px;cursor:pointer;justify-self:start;text-decoration:underline}
+  .qm-msg{min-height:1.2em;font-size:14px;color:#A3165B}
+  .qm-msg.ok{color:#1F7F6C}
+  .qm-help{font-size:13.5px;color:#4A4560;line-height:1.8}
+  .qm-help summary{cursor:pointer;font-weight:700;color:#6B4FD8}
+  .qm-help ol{margin:8px 0;padding-inline-start:20px}
+  .qm-out{position:fixed;inset-block-end:18px;inset-inline-start:18px;z-index:20;min-height:42px;padding:0 18px;border-radius:999px;border:1px solid #E6E1F5;background:#fff;color:#1C1633;font-family:'Tajawal',Tahoma,sans-serif;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 10px 24px -12px rgba(28,22,51,.35)}
+</style>
+<div class="qm-login" id="qmLogin" dir="rtl" lang="ar">
+  <form class="qm-card" id="qmLoginForm" novalidate>
+    <div class="qm-top">
+      <div class="qm-brand">
+        <svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="qlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FB8FF"/><stop offset="0.5" stop-color="#B8B2FF"/><stop offset="1" stop-color="#F08BD8"/></linearGradient></defs><path d="M86 56V32A20 20 0 0 0 66 12H32A20 20 0 0 0 12 32V68A20 20 0 0 0 32 88H56" fill="none" stroke="url(#qlg)" stroke-width="13" stroke-linecap="round"/><path d="M61 61L72 72" stroke="url(#qlg)" stroke-width="12" stroke-linecap="round"/><rect x="72" y="72" width="22" height="22" rx="6" fill="url(#qlg)"/></svg>
+        <h1 data-l="title"></h1>
+      </div>
+      <button type="button" class="qm-lang" id="qmLang"></button>
+    </div>
+    <p data-l="sub"></p>
+    <label><span data-l="token"></span><input type="password" id="qmToken" autocomplete="off" dir="ltr" placeholder="github_pat_…" required></label>
+    <button class="qm-btn" type="submit" id="qmGo" data-l="login"></button>
+    <span class="qm-msg" id="qmMsg" role="alert"></span>
+    <details class="qm-help"><summary data-l="howT"></summary><ol><li data-l="how1"></li><li data-l="how2"></li><li data-l="how3"></li><li data-l="how4"></li></ol><a id="qmNewTok" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener" data-l="howLink"></a></details>
+  </form>
+</div>
+
+<div id="app" hidden></div>
+<script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      lang: 'ar', db: null, dbChecked: false, projects: [], contacts: [], contactsLoaded: false, stats: { completed: '', inProgress: '', study: '' },
+      form: this.emptyForm(), editId: null, pendingDelete: null, msg: '', msgKind: 'ok'
+    };
+    this.unsubs = [];
+  }
+  emptyForm() {
+    return { titleAr: '', titleEn: '', subAr: '', subEn: '', problemAr: '', problemEn: '', solutionAr: '', solutionEn: '', resultAr: '', resultEn: '', tagsAr: '', tagsEn: '', order: '', image: '', year: '2026', link: '', status: 'done', visible: true };
+  }
+  componentDidMount() {
+    let tries = 0;
+    const getDb = () => {
+      const c = window.claude;
+      if (c && typeof c.use === 'function') return c.use('db');
+      if (++tries > 40) return Promise.resolve(null);
+      return new Promise((r) => setTimeout(r, 250)).then(getDb);
+    };
+    getDb().then((db) => {
+      if (this.dead) return;
+      this.setState({ db, dbChecked: true });
+      if (!db) return;
+      this.unsubs.push(db.collection('projects').orderBy('order').onSnapshot(
+        (snap) => this.setState({ projects: snap.docs.map((d) => Object.assign({ id: d.id }, d.data())) }),
+        () => {}
+      ));
+      db.doc('settings/stats').get().then((snap) => {
+        const d = snap.exists ? snap.data() : {};
+        const v = (x) => (typeof x === 'number' ? String(x) : '');
+        this.setState({ stats: { completed: v(d.completed), inProgress: v(d.inProgress), study: v(d.study) } });
+      }).catch(() => {});
+      db.doc('settings/contact').get().then((snap) => {
+        const d = snap.exists ? snap.data() : null;
+        const items = d && Array.isArray(d.items) ? d.items : [];
+        this.setState({ contacts: items.map((it, i) => ({ key: 'k' + i + '-' + Date.now(), type: it.type || 'email', value: it.value || '', enabled: it.enabled !== false })), contactsLoaded: true });
+      }).catch(() => this.setState({ contactsLoaded: true }));
+    }).catch(() => this.setState({ dbChecked: true }));
+  }
+  componentWillUnmount() {
+    this.dead = true;
+    this.unsubs.forEach((u) => { try { u(); } catch (e) {} });
+  }
+  flash(msg, kind) {
+    this.setState({ msg, msgKind: kind || 'ok' });
+    clearTimeout(this.msgTimer);
+    this.msgTimer = setTimeout(() => { if (!this.dead) this.setState({ msg: '' }); }, 5000);
+  }
+  failMsg(t, e) {
+    const code = e && e.code;
+    if (code === 'invalid_argument') return t.noPermission;
+    if (code === 'quota_exceeded') return t.quota;
+    return t.saveError;
+  }
+  renderVals() {
+    const lang = this.state.lang;
+    const ar = {
+      title: 'لوحة التحكم', subtitle: 'قريب مني · إدارة البورتفوليو', viewSite: 'عرض البورتفوليو', switchTo: 'English',
+      projects: 'الإنجازات', orderHint: 'الإنجاز صاحب أصغر رقم ترتيب يظهر كدراسة حالة رئيسية، والباقي يظهر كبطاقات تحته.',
+      empty: 'لا توجد إنجازات بعد. البورتفوليو يعرض حالياً المحتوى التجريبي.', addProject: 'إضافة إنجاز',
+      edit: 'تعديل', del: 'حذف', confirmDel: 'تأكيد الحذف', newTitle: 'إنجاز جديد', editTitle: 'تعديل الإنجاز',
+      add: 'إضافة', update: 'حفظ التعديلات', cancel: 'إلغاء', count: (n) => n + ' إنجاز', orderWord: 'الترتيب',
+      f: { titleAr: 'اسم المشروع (عربي)', titleEn: 'اسم المشروع (English)', subAr: 'وصف قصير (عربي)', subEn: 'وصف قصير (English)', problemAr: 'المشكلة (عربي)', problemEn: 'المشكلة (English)', solutionAr: 'الحل (عربي)', solutionEn: 'الحل (English)', resultAr: 'النتيجة (عربي)', resultEn: 'النتيجة (English)', tagsAr: 'الوسوم (عربي، افصلي بفاصلة)', tagsEn: 'الوسوم (English, comma-separated)', order: 'الترتيب' },
+      statsTitle: 'أرقام المشاريع', statsHint: 'تظهر في أعلى البورتفوليو بجانب سنوات الخبرة.', saveStats: 'حفظ الأرقام', sCompleted: 'مشاريع منجزة', sProgress: 'قيد التنفيذ', sStudy: 'تحت الدراسة',
+      contacts: 'وسائل التواصل', contactHint: 'تظهر في قسم "تواصل معنا" بالترتيب نفسه. الأولى تظهر كزر رئيسي.',
+      type: 'الوسيلة', value: 'القيمة', show: 'إظهار', remove: 'إزالة', addContact: 'إضافة وسيلة', saveContacts: 'حفظ وسائل التواصل',
+      types: { whatsapp: 'واتساب', instagram: 'إنستغرام', email: 'البريد الإلكتروني', linkedin: 'LinkedIn', x: 'X (تويتر)', phone: 'هاتف' },
+      saved: 'تم الحفظ، والبورتفوليو تحدّث.', deleted: 'تم الحذف.', needTitle: 'اكتبي اسم المشروع بلغة واحدة على الأقل.',
+      saveError: 'تعذّر الحفظ. حاولي مرة أخرى.', noPermission: 'ليس لديك صلاحية التعديل على هذه الصفحة.', quota: 'وصلتِ للحد الأقصى من البيانات المخزنة.',
+      image: 'صورة المشروع', status: 'حالة المشروع', year: 'السنة', link: 'رابط المشروع (اختياري)', visible: 'إظهار في الموقع', st: { done: ['منجز', 'مشروع مكتمل ومسلّم'], progress: ['قيد التنفيذ', 'العمل جارٍ عليه الآن'], study: ['تحت الدراسة', 'فكرة أو دراسة قبل البدء'] }, pickImg: 'اختيار صورة', changeImg: 'تغيير الصورة', uploading: 'جارٍ الرفع…', imgFail: 'تعذّر رفع الصورة.',
+      noDb: 'التخزين غير متاح في هذا العرض، فلن تُحفظ التعديلات. افتحي الصفحة من رابطها في Claude.'
+    };
+    const en = {
+      title: 'Admin', subtitle: 'Qareeb Minni · Portfolio management', viewSite: 'View portfolio', switchTo: 'العربية',
+      projects: 'Achievements', orderHint: 'The achievement with the lowest order number shows as the main case study; the rest show as cards below it.',
+      empty: 'No achievements yet. The portfolio is showing sample content.', addProject: 'Add achievement',
+      edit: 'Edit', del: 'Delete', confirmDel: 'Confirm delete', newTitle: 'New achievement', editTitle: 'Edit achievement',
+      add: 'Add', update: 'Save changes', cancel: 'Cancel', count: (n) => n + (n === 1 ? ' achievement' : ' achievements'), orderWord: 'Order',
+      f: { titleAr: 'Project name (Arabic)', titleEn: 'Project name (English)', subAr: 'Short description (Arabic)', subEn: 'Short description (English)', problemAr: 'Problem (Arabic)', problemEn: 'Problem (English)', solutionAr: 'Solution (Arabic)', solutionEn: 'Solution (English)', resultAr: 'Result (Arabic)', resultEn: 'Result (English)', tagsAr: 'Tags (Arabic, comma-separated)', tagsEn: 'Tags (English, comma-separated)', order: 'Order' },
+      statsTitle: 'Project numbers', statsHint: 'Shown at the top of the portfolio next to years of experience.', saveStats: 'Save numbers', sCompleted: 'Completed projects', sProgress: 'In progress', sStudy: 'Under study',
+      contacts: 'Contact methods', contactHint: 'Shown in the "Contact us" section in this order. The first one shows as the main button.',
+      type: 'Method', value: 'Value', show: 'Show', remove: 'Remove', addContact: 'Add method', saveContacts: 'Save contact methods',
+      types: { whatsapp: 'WhatsApp', instagram: 'Instagram', email: 'Email', linkedin: 'LinkedIn', x: 'X (Twitter)', phone: 'Phone' },
+      saved: 'Saved. The portfolio is updated.', deleted: 'Deleted.', needTitle: 'Enter the project name in at least one language.',
+      saveError: 'Could not save. Please try again.', noPermission: 'You do not have permission to edit this page.', quota: 'The storage limit has been reached.',
+      image: 'Project image', status: 'Project status', year: 'Year', link: 'Project link (optional)', visible: 'Show on the site', st: { done: ['Completed', 'Finished and delivered'], progress: ['In progress', 'Being worked on now'], study: ['Under study', 'An idea or pre-start study'] }, pickImg: 'Choose image', changeImg: 'Change image', uploading: 'Uploading…', imgFail: 'Image upload failed.',
+      noDb: 'Storage is not available in this view, so changes will not be saved. Open the page from its Claude link.'
+    };
+    const t = lang === 'ar' ? ar : en;
+    const db = this.state.db;
+    const form = this.state.form;
+    const editing = !!this.state.editId;
+
+    const placeholders = { whatsapp: '+968 9xxxxxxx', instagram: '@qareebminni', email: 'name@example.com', linkedin: 'https://www.linkedin.com/in/...', x: '@qareebminni', phone: '+968 2xxxxxxx' };
+    const multiKeys = ['problemAr', 'problemEn', 'solutionAr', 'solutionEn', 'resultAr', 'resultEn'];
+    const fieldKeys = ['titleAr', 'titleEn', 'subAr', 'subEn', 'problemAr', 'problemEn', 'solutionAr', 'solutionEn', 'resultAr', 'resultEn', 'tagsAr', 'tagsEn', 'order'];
+    const fields = fieldKeys.map((k) => {
+      const multi = multiKeys.indexOf(k) >= 0;
+      return {
+        key: k, label: t.f[k], value: form[k], multi, single: !multi,
+        type: k === 'order' ? 'number' : 'text',
+        dir: k === 'order' ? 'ltr' : (k.slice(-2) === 'Ar' ? 'rtl' : 'ltr'),
+        placeholder: '',
+        wrapStyle: 'display: flex; flex-direction: column; gap: 6px',
+        onInput: (e) => { const v = e.target.value; this.setState({ form: Object.assign({}, this.state.form, { [k]: v }) }); }
+      };
+    });
+
+    const projectRows = this.state.projects.map((p) => {
+      const pending = this.state.pendingDelete === p.id;
+      const active = this.state.editId === p.id;
+      return {
+        title: (lang === 'ar' ? (p.titleAr || p.titleEn) : (p.titleEn || p.titleAr)) || '—',
+        meta: t.orderWord + ': ' + (p.order === undefined || p.order === null ? '—' : p.order),
+        style: 'display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid ' + (active ? '#6B4FD8' : '#EEEAF7') + '; background: ' + (active ? '#F3F0FF' : '#FBFAFE'),
+        delLabel: pending ? t.confirmDel : t.del,
+        delStyle: 'min-height: 36px; padding: 0 12px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; ' + (pending ? 'border: none; background: #A3165B; color: #FFFFFF' : 'border: 1px solid #F2C4D8; background: #FFFFFF; color: #A3165B'),
+        edit: () => {
+          const f = this.emptyForm();
+          Object.keys(f).forEach((k) => { if (k === 'visible') f[k] = p[k] !== false; else if (p[k] !== undefined && p[k] !== null) f[k] = String(p[k]); });
+          this.setState({ form: f, editId: p.id, pendingDelete: null });
+        },
+        remove: () => {
+          if (!pending) { this.setState({ pendingDelete: p.id }); return; }
+          if (!db) return;
+          db.doc('projects/' + p.id).delete().then(() => {
+            if (this.state.editId === p.id) this.setState({ form: this.emptyForm(), editId: null });
+            this.setState({ pendingDelete: null });
+            this.flash(t.deleted, 'ok');
+          }).catch((e) => this.flash(this.failMsg(t, e), 'err'));
+        }
+      };
+    });
+
+    const saveProject = (e) => {
+      if (e && e.preventDefault) e.preventDefault();
+      const f = this.state.form;
+      if (!String(f.titleAr).trim() && !String(f.titleEn).trim()) { this.flash(t.needTitle, 'err'); return; }
+      if (!db) { this.flash(t.noDb, 'err'); return; }
+      const body = {};
+      Object.keys(f).forEach((k) => { if (['order', 'image', 'visible'].indexOf(k) < 0) body[k] = String(f[k]).trim(); });
+      const n = parseFloat(f.order);
+      const maxOrder = this.state.projects.reduce((m, p) => Math.max(m, typeof p.order === 'number' ? p.order : 0), 0);
+      body.order = isFinite(n) ? n : maxOrder + 1;
+      body.image = f.image || '';
+      body.visible = f.visible !== false;
+      body.updatedAt = new Date().toISOString();
+      const ref = this.state.editId ? db.doc('projects/' + this.state.editId) : db.collection('projects').doc();
+      ref.set(body).then(() => {
+        this.setState({ form: this.emptyForm(), editId: null });
+        this.flash(t.saved, 'ok');
+      }).catch((err) => this.flash(this.failMsg(t, err), 'err'));
+    };
+
+    const typeOptions = ['whatsapp', 'instagram', 'email', 'linkedin', 'x', 'phone'].map((v) => ({ value: v, label: t.types[v] }));
+    const setContact = (key, patch) => this.setState({ contacts: this.state.contacts.map((c) => (c.key === key ? Object.assign({}, c, patch) : c)) });
+    const contactRows = this.state.contacts.map((c) => ({
+      type: c.type, value: c.value, enabled: c.enabled, placeholder: placeholders[c.type] || '',
+      onType: (e) => setContact(c.key, { type: e.target.value }),
+      onValue: (e) => setContact(c.key, { value: e.target.value }),
+      onToggle: (e) => setContact(c.key, { enabled: !!e.target.checked }),
+      onRemove: () => this.setState({ contacts: this.state.contacts.filter((x) => x.key !== c.key) })
+    }));
+    const addContact = () => this.setState({ contacts: this.state.contacts.concat([{ key: 'n' + Date.now(), type: 'whatsapp', value: '', enabled: true }]) });
+    const saveContacts = () => {
+      if (!db) { this.flash(t.noDb, 'err'); return; }
+      const items = this.state.contacts
+        .map((c) => ({ type: c.type, value: String(c.value).trim(), enabled: !!c.enabled }))
+        .filter((c) => c.value);
+      db.doc('settings/contact').set({ items, updatedAt: new Date().toISOString() })
+        .then(() => this.flash(t.saved, 'ok'))
+        .catch((err) => this.flash(this.failMsg(t, err), 'err'));
+    };
+
+    const statFields = [['completed', t.sCompleted], ['inProgress', t.sProgress], ['study', t.sStudy]].map(([k, label]) => ({
+      label, value: this.state.stats[k],
+      onInput: (e) => { const v = e.target.value; this.setState({ stats: Object.assign({}, this.state.stats, { [k]: v }) }); }
+    }));
+    const saveStats = () => {
+      if (!db) { this.flash(t.noDb, 'err'); return; }
+      const n = (v) => { const x = parseInt(v, 10); return isFinite(x) && x >= 0 ? x : 0; };
+      const st = this.state.stats;
+      db.doc('settings/stats').set({ completed: n(st.completed), inProgress: n(st.inProgress), study: n(st.study), updatedAt: new Date().toISOString() })
+        .then(() => this.flash(t.saved, 'ok'))
+        .catch((err) => this.flash(this.failMsg(t, err), 'err'));
+    };
+
+    const msgKind = this.state.msgKind;
+    return {
+      lang, t, fields, projectRows, contactRows, typeOptions, editing,
+      dir: lang === 'ar' ? 'rtl' : 'ltr',
+      noDb: this.state.dbChecked && !db,
+      noProjects: this.state.projects.length === 0,
+      projectCount: t.count(this.state.projects.length),
+      formTitle: editing ? t.editTitle : t.newTitle,
+      saveLabel: editing ? t.update : t.add,
+      hasMsg: !!this.state.msg,
+      msg: this.state.msg,
+      msgStyle: 'padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; ' + (msgKind === 'err' ? 'background: #FDECF3; border: 1px solid #F2C4D8; color: #A3165B' : 'background: #ECFAF3; border: 1px solid #B6E5CC; color: #11663D'),
+      toggleLang: () => this.setState({ lang: lang === 'ar' ? 'en' : 'ar' }),
+      newProject: () => this.setState({ form: this.emptyForm(), editId: null, pendingDelete: null }),
+      statusCards: ['done', 'progress', 'study'].map((k) => ({ label: t.st[k][0], hint: t.st[k][1], pick: () => this.setState({ form: Object.assign({}, this.state.form, { status: k }) }),
+        style: 'display: flex; flex-direction: column; gap: 2px; text-align: start; padding: 12px 14px; border-radius: 16px; cursor: pointer; font-family: inherit; color: #1C1633; border: 2px solid ' + (form.status === k ? '#6B4FD8' : '#E6E1F5') + '; background: ' + (form.status === k ? '#F3F0FF' : '#FFFFFF') })),
+      yearVal: form.year, linkVal: form.link, visibleVal: form.visible !== false,
+      setYear: (e) => { const v = e.target.value; this.setState({ form: Object.assign({}, this.state.form, { year: v }) }); },
+      setLink: (e) => { const v = e.target.value; this.setState({ form: Object.assign({}, this.state.form, { link: v }) }); },
+      setVisible: (e) => { const v = !!e.target.checked; this.setState({ form: Object.assign({}, this.state.form, { visible: v }) }); },
+      hasImage: !!form.image, imageSrc: form.image ? QM.img(form.image) : '',
+      imageLabel: this.state.uploading ? t.uploading : (form.image ? t.changeImg : t.pickImg),
+      pickImage: (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        this.setState({ uploading: true });
+        window.claude.use('assets').then((as) => {
+          if (!as) throw new Error('na');
+          return as.upload(file);
+        }).then((r) => this.setState({ uploading: false, form: Object.assign({}, this.state.form, { image: r.id }) }))
+          .catch(() => { this.setState({ uploading: false }); this.flash(t.imgFail, 'err'); });
+      },
+      saveProject, addContact, saveContacts, statFields, saveStats
+    };
+  }
+}
+var QM_TREE = [["div",{"dir":"{{dir}}","lang":"{{lang}}","style":"font-family: 'Tajawal', Tahoma, sans-serif; background: #F7F5FC; color: #1C1633; min-height: 100vh"},[["svg",{"width":"0","height":"0","style":"position: absolute","aria-hidden":"true"},[["defs",{},[["linearGradient",{"id":"qag","x1":"0","y1":"0","x2":"1","y2":"1"},[["stop",{"offset":"0","stop-color":"#8FB8FF"},[]],["stop",{"offset":"0.5","stop-color":"#B8B2FF"},[]],["stop",{"offset":"1","stop-color":"#F08BD8"},[]]]],["linearGradient",{"id":"qap","x1":"0","y1":"0","x2":"1","y2":"1"},[["stop",{"offset":"0","stop-color":"#C79BFF"},[]],["stop",{"offset":"1","stop-color":"#F08BD8"},[]]]]]]]]," ",["header",{"style":"background: #FFFFFF; color: #1C1633; border-bottom: 1px solid #E6E1F5"},[["div",{"style":"max-width: 1120px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px"},[["div",{"style":"display: flex; align-items: center; gap: 12px"},[["svg",{"width":"36","height":"36","viewBox":"0 0 100 100","aria-hidden":"true"},[["path",{"d":"M86 56V32A20 20 0 0 0 66 12H32A20 20 0 0 0 12 32V68A20 20 0 0 0 32 88H56","fill":"none","stroke":"url(#qag)","stroke-width":"13","stroke-linecap":"round"},[]],["path",{"d":"M61 61L72 72","stroke":"url(#qag)","stroke-width":"12","stroke-linecap":"round"},[]],["rect",{"x":"72","y":"72","width":"22","height":"22","rx":"6","fill":"url(#qap)"},[]]]]," ",["div",{"style":"display: flex; flex-direction: column"},[["span",{"style":"font-size: 20px; font-weight: 900"},["{{t.title}}"]]," ",["span",{"style":"font-size: 13px; color: #6B6585"},["{{t.subtitle}}"]]," "]]," "]]," ",["div",{"style":"display: flex; flex-wrap: wrap; align-items: center; gap: 10px"},[["a",{"href":"index.html","style":"min-height: 44px; padding: 0 16px; border-radius: 14px; border: 1px solid #1C1633; color: #1C1633; display: flex; align-items: center; font-weight: 600; font-size: 14px"},["{{t.viewSite}}"]]," ",["button",{"type":"button","onClick":"{{toggleLang}}","style":"min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid #1C1633; background: transparent; color: #1C1633; font-weight: 600; font-size: 14px; cursor: pointer"},["{{t.switchTo}}"]]," "]]," "]]," "]]," ",["main",{"style":"max-width: 1120px; margin: 0 auto; padding: 28px 24px 64px; display: flex; flex-direction: column; gap: 24px"},[["sc-if",{"value":"{{hasMsg}}","hint-placeholder-val":"{{ false }}"},[["div",{"role":"status","style":"{{msgStyle}}"},["{{msg}}"]]]]," ",["sc-if",{"value":"{{noDb}}","hint-placeholder-val":"{{ false }}"},[["div",{"role":"status","style":"padding: 12px 16px; border-radius: 12px; background: #FFF4E5; border: 1px solid #F5C98B; color: #7A4B00; font-size: 14px"},["{{t.noDb}}"]]]]," ",["section",{"style":"display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start"},[["div",{"style":"flex: 1 1 340px; min-width: 0; background: #FFFFFF; border: 1px solid #E6E1F5; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 14px"},[["div",{"style":"display: flex; justify-content: space-between; align-items: center; gap: 10px"},[["h2",{"style":"margin: 0; font-size: 20px; font-weight: 800"},["{{t.projects}}"]]," ",["span",{"style":"font-size: 13px; color: #4A4560"},["{{projectCount}}"]]," "]]," ",["p",{"style":"margin: 0; font-size: 13px; line-height: 1.7; color: #4A4560"},["{{t.orderHint}}"]]," ",["sc-if",{"value":"{{noProjects}}","hint-placeholder-val":"{{ false }}"},[["p",{"style":"margin: 0; padding: 18px; border: 1px dashed #CFC6EC; border-radius: 12px; text-align: center; color: #4A4560; font-size: 14px"},["{{t.empty}}"]]]]," ",["ul",{"style":"list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px"},[["sc-for",{"list":"{{projectRows}}","as":"p","hint-placeholder-count":"2"},[["li",{"style":"{{p.style}}"},[["div",{"style":"display: flex; flex-direction: column; gap: 2px; min-width: 0"},[["span",{"style":"font-weight: 700; font-size: 15px"},["{{p.title}}"]]," ",["span",{"style":"font-size: 12px; color: #4A4560"},["{{p.meta}}"]]," "]]," ",["div",{"style":"display: flex; gap: 6px; flex: none"},[["button",{"type":"button","onClick":"{{p.edit}}","style":"min-height: 36px; padding: 0 12px; border-radius: 8px; border: 1px solid #E6E1F5; background: #FFFFFF; color: #1C1633; font-size: 13px; font-weight: 600; cursor: pointer"},["{{t.edit}}"]]," ",["button",{"type":"button","onClick":"{{p.remove}}","style":"{{p.delStyle}}"},["{{p.delLabel}}"]]," "]]," "]]]]]]," ",["button",{"type":"button","onClick":"{{newProject}}","style":"align-self: flex-start; min-height: 44px; padding: 0 18px; border-radius: 14px; border: 1px dashed #6B4FD8; background: #FFFFFF; color: #6B4FD8; font-weight: 700; font-size: 14px; cursor: pointer"},["+ {{t.addProject}}"]]," "]]," ",["form",{"onSubmit":"{{saveProject}}","style":"flex: 2 1 520px; min-width: 0; background: #FFFFFF; border: 1px solid #E6E1F5; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 16px"},[["h2",{"style":"margin: 0; font-size: 20px; font-weight: 800"},["{{formTitle}}"]]," ",["div",{"style":"display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px"},[["sc-for",{"list":"{{fields}}","as":"f","hint-placeholder-count":"10"},[["label",{"style":"{{f.wrapStyle}}"},[["span",{"style":"font-size: 13px; font-weight: 700"},["{{f.label}}"]]," ",["sc-if",{"value":"{{f.multi}}","hint-placeholder-val":"{{ false }}"},[["textarea",{"dir":"{{f.dir}}","rows":"3","value":"{{f.value}}","onInput":"{{f.onInput}}","placeholder":"{{f.placeholder}}","style":"padding: 10px 12px; border-radius: 14px; border: 1px solid #D8D1EE; background: #FBFAFE; color: #1C1633; font-size: 14px; line-height: 1.6; resize: vertical"},[]]]]," ",["sc-if",{"value":"{{f.single}}","hint-placeholder-val":"{{ true }}"},[["input",{"type":"{{f.type}}","dir":"{{f.dir}}","value":"{{f.value}}","onInput":"{{f.onInput}}","placeholder":"{{f.placeholder}}","style":"min-height: 42px; padding: 0 12px; border-radius: 14px; border: 1px solid #D8D1EE; background: #FBFAFE; color: #1C1633; font-size: 14px"},[]]]]," "]]]]," "]]," ",["div",{"style":"display: flex; flex-direction: column; gap: 8px"},[["span",{"style":"font-size: 13px; font-weight: 700"},["{{t.status}}"]]," ",["div",{"style":"display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px"},[["sc-for",{"list":"{{statusCards}}","as":"s","hint-placeholder-count":"3"},[["button",{"type":"button","onClick":"{{s.pick}}","style":"{{s.style}}"},[["span",{"style":"font-weight: 700; font-size: 15px"},["{{s.label}}"]],["span",{"style":"font-size: 12px; color: #4A4560"},["{{s.hint}}"]]]]]]," "]]," "]]," ",["div",{"style":"display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px"},[["label",{"style":"display: flex; flex-direction: column; gap: 6px"},[["span",{"style":"font-size: 13px; font-weight: 700"},["{{t.year}}"]],["input",{"type":"text","dir":"ltr","value":"{{yearVal}}","onInput":"{{setYear}}","style":"min-height: 42px; padding: 0 12px; border-radius: 14px; border: 1px solid #D8D1EE; background: #FBFAFE; font-size: 14px"},[]]]]," ",["label",{"style":"display: flex; flex-direction: column; gap: 6px"},[["span",{"style":"font-size: 13px; font-weight: 700"},["{{t.link}}"]],["input",{"type":"text","dir":"ltr","value":"{{linkVal}}","onInput":"{{setLink}}","placeholder":"https://","style":"min-height: 42px; padding: 0 12px; border-radius: 14px; border: 1px solid #D8D1EE; background: #FBFAFE; font-size: 14px"},[]]]]," "]]," ",["label",{"style":"display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #F3F0FF; font-weight: 700; font-size: 14px"},[["input",{"type":"checkbox","checked":"{{visibleVal}}","onChange":"{{setVisible}}","style":"width: 20px; height: 20px"},[]],"{{t.visible}}"]]," ",["div",{"style":"display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 14px; border: 1px dashed #CFC6EC; border-radius: 24px; background: #FBFAFE"},[["sc-if",{"value":"{{hasImage}}","hint-placeholder-val":"{{ false }}"},[["img",{"src":"{{imageSrc}}","alt":"","style":"width: 160px; max-width: 100%; aspect-ratio: 8 / 5; object-fit: cover; border-radius: 14px"},[]]]]," ",["div",{"style":"display: flex; flex-direction: column; gap: 8px"},[["span",{"style":"font-size: 13px; font-weight: 700"},["{{t.image}}"]]," ",["label",{"style":"min-height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid #1C1633; display: inline-flex; align-items: center; font-size: 14px; font-weight: 600; cursor: pointer"},["{{imageLabel}}",["input",{"type":"file","accept":"image/*","onChange":"{{pickImage}}","style":"display: none"},[]]]]," "]]," "]]," ",["div",{"style":"display: flex; flex-wrap: wrap; gap: 10px"},[["button",{"type":"submit","style":"min-height: 46px; padding: 0 24px; border-radius: 14px; border: none; background: #1C1633; color: #FFFFFF; font-weight: 700; font-size: 15px; cursor: pointer"},["{{saveLabel}}"]]," ",["sc-if",{"value":"{{editing}}","hint-placeholder-val":"{{ false }}"},[["button",{"type":"button","onClick":"{{newProject}}","style":"min-height: 46px; padding: 0 20px; border-radius: 14px; border: 1px solid #D8D1EE; background: #FFFFFF; color: #1C1633; font-weight: 600; font-size: 15px; cursor: pointer"},["{{t.cancel}}"]]]]," "]]," "]]," "]]," ",["section",{"style":"background: #FFFFFF; border: 1px solid #E6E1F5; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 14px"},[["h2",{"style":"margin: 0; font-size: 20px; font-weight: 800"},["{{t.statsTitle}}"]]," ",["p",{"style":"margin: 0; font-size: 13px; line-height: 1.7; color: #4A4560"},["{{t.statsHint}}"]]," ",["div",{"style":"display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px"},[["sc-for",{"list":"{{statFields}}","as":"s","hint-placeholder-count":"3"},[["label",{"style":"display: flex; flex-direction: column; gap: 6px"},[["span",{"style":"font-size: 13px; font-weight: 700"},["{{s.label}}"]]," ",["input",{"type":"number","min":"0","step":"1","dir":"ltr","value":"{{s.value}}","onInput":"{{s.onInput}}","style":"min-height: 46px; padding: 0 12px; border-radius: 14px; border: 1px solid #D8D1EE; background: #FBFAFE; color: #1C1633; font-size: 20px; font-weight: 700"},[]]," "]]]]," "]]," ",["button",{"type":"button","onClick":"{{saveStats}}","style":"align-self: flex-start; min-height: 44px; padding: 0 22px; border-radius: 14px; border: none; background: #1C1633; color: #FFFFFF; font-weight: 700; font-size: 14px; cursor: pointer"},["{{t.saveStats}}"]]," "]]," ",["section",{"style":"background: #FFFFFF; border: 1px solid #E6E1F5; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 14px"},[["h2",{"style":"margin: 0; font-size: 20px; font-weight: 800"},["{{t.contacts}}"]]," ",["p",{"style":"margin: 0; font-size: 13px; line-height: 1.7; color: #4A4560"},["{{t.contactHint}}"]]," ",["sc-for",{"list":"{{contactRows}}","as":"c","hint-placeholder-count":"2"},[["div",{"style":"display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px; border: 1px solid #EEEAF7; border-radius: 12px; background: #FBFAFE"},[["label",{"style":"display: flex; flex-direction: column; gap: 4px; flex: 0 1 180px"},[["span",{"style":"font-size: 12px; font-weight: 700"},["{{t.type}}"]]," ",["select",{"value":"{{c.type}}","onChange":"{{c.onType}}","style":"min-height: 42px; padding: 0 10px; border-radius: 14px; border: 1px solid #D8D1EE; background: #FFFFFF; color: #1C1633; font-size: 14px"},[["sc-for",{"list":"{{typeOptions}}","as":"o","hint-placeholder-count":"6"},[["option",{"value":"{{o.value}}"},["{{o.label}}"]]]]]]," "]]," ",["label",{"style":"display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px; min-width: 0"},[["span",{"style":"font-size: 12px; font-weight: 700"},["{{t.value}}"]]," ",["input",{"type":"text","dir":"ltr","value":"{{c.value}}","onInput":"{{c.onValue}}","placeholder":"{{c.placeholder}}","style":"min-height: 42px; padding: 0 12px; border-radius: 14px; border: 1px solid #D8D1EE; background: #FFFFFF; color: #1C1633; font-size: 14px"},[]]," "]]," ",["label",{"style":"display: flex; align-items: center; gap: 8px; min-height: 44px; padding-top: 18px; font-size: 14px"},[["input",{"type":"checkbox","checked":"{{c.enabled}}","onChange":"{{c.onToggle}}","style":"width: 20px; height: 20px"},[]]," ",["span",{},["{{t.show}}"]]," "]]," ",["button",{"type":"button","onClick":"{{c.onRemove}}","aria-label":"{{t.remove}}","style":"min-height: 42px; margin-top: 18px; padding: 0 14px; border-radius: 14px; border: 1px solid #F2C4D8; background: #FFFFFF; color: #A3165B; font-size: 13px; font-weight: 600; cursor: pointer"},["{{t.remove}}"]]," "]]]]," ",["div",{"style":"display: flex; flex-wrap: wrap; gap: 10px"},[["button",{"type":"button","onClick":"{{addContact}}","style":"min-height: 44px; padding: 0 18px; border-radius: 14px; border: 1px dashed #6B4FD8; background: #FFFFFF; color: #6B4FD8; font-weight: 700; font-size: 14px; cursor: pointer"},["+ {{t.addContact}}"]]," ",["button",{"type":"button","onClick":"{{saveContacts}}","style":"min-height: 44px; padding: 0 22px; border-radius: 14px; border: none; background: #1C1633; color: #FFFFFF; font-weight: 700; font-size: 14px; cursor: pointer"},["{{t.saveContacts}}"]]," "]]," "]]," "]]," "]]," "];
+var QM_PROPS = {};
+(function () {
+  var TX = {
+    ar: { title: 'لوحة التحكم', sub: 'إدارة البورتفوليو · لصاحبة الموقع فقط. التعديلات تُحفظ في مستودع GitHub وتظهر في الموقع خلال دقيقة تقريباً.', token: 'مفتاح الوصول من GitHub (Token)', login: 'دخول', lang: 'English',
+      bad: 'المفتاح غير صحيح أو انتهت صلاحيته.', noPush: 'المفتاح صحيح لكن بدون صلاحية الكتابة على مستودع portfolio.', net: 'تعذّر الاتصال بـ GitHub. تحقّقي من الإنترنت.', need: 'الصقي المفتاح أولاً.', checking: 'جارٍ التحقق…',
+      howT: 'كيف أُنشئ المفتاح؟ (مرة واحدة)', how1: 'افتحي الرابط بالأسفل في GitHub.', how2: 'الاسم: portfolio-admin، والمدة: سنة.', how3: 'Repository access: Only select repositories ← portfolio.', how4: 'Permissions ← Contents: Read and write، ثم Generate token وانسخيه هنا.', howLink: 'إنشاء مفتاح جديد في GitHub', out: 'خروج' },
+    en: { title: 'Admin', sub: 'Portfolio management · owner only. Changes are saved to the GitHub repository and appear on the site within about a minute.', token: 'GitHub access token', login: 'Log in', lang: 'العربية',
+      bad: 'The token is wrong or expired.', noPush: 'The token works but cannot write to the portfolio repository.', net: 'Could not reach GitHub. Check your internet.', need: 'Paste the token first.', checking: 'Checking…',
+      howT: 'How do I create the token? (once)', how1: 'Open the link below on GitHub.', how2: 'Name: portfolio-admin, expiration: 1 year.', how3: 'Repository access: Only select repositories → portfolio.', how4: 'Permissions → Contents: Read and write, then Generate token and paste it here.', howLink: 'Create a new token on GitHub', out: 'Log out' }
+  };
+  var lang = 'ar';
+  try { if (localStorage.getItem('qm-pf-lang') === 'en') lang = 'en'; } catch (e) {}
+  var $ = function (id) { return document.getElementById(id); };
+  var L = function () { return TX[lang]; };
+  function paint() {
+    var box = $('qmLogin'); box.dir = lang === 'en' ? 'ltr' : 'rtl'; box.lang = lang;
+    document.querySelectorAll('[data-l]').forEach(function (e) { e.textContent = L()[e.dataset.l]; });
+    $('qmLang').textContent = L().lang;
+  }
+  $('qmLang').onclick = function () { lang = lang === 'ar' ? 'en' : 'ar'; try { localStorage.setItem('qm-pf-lang', lang); } catch (e) {} paint(); };
+  paint();
+  function msg(text, ok) { var m = $('qmMsg'); m.textContent = text || ''; m.className = 'qm-msg' + (ok ? ' ok' : ''); }
+
+  var mounted = false;
+  function enter() {
+    msg(L().checking, true);
+    return QM.auth.check().then(function (r) {
+      if (!r.ok) { msg(r.status === 0 ? L().net : r.status === 200 ? L().noPush : L().bad); if (r.status === 401) QM.auth.clear(); return; }
+      msg('');
+      if (mounted) return; mounted = true;
+      QM.gate.ready = true;
+      $('qmLogin').hidden = true; $('app').hidden = false;
+      QMDC.mount(Component, QM_TREE, $('app'), QM_PROPS);
+      var out = document.createElement('button'); out.type = 'button'; out.className = 'qm-out'; out.textContent = L().out;
+      out.onclick = function () { QM.auth.clear(); location.replace(location.pathname); };
+      document.body.appendChild(out);
+    });
+  }
+  if (QM.auth.hasToken()) enter();
+  $('qmLoginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var tk = $('qmToken').value.trim();
+    if (!tk) { msg(L().need); return; }
+    QM.auth.setToken(tk); $('qmToken').value = '';
+    enter();
+  });
+})();
+
+</script>
+</body>
+</html>
