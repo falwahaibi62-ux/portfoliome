@@ -14,6 +14,8 @@ input,textarea,select{font-family:inherit}
 <style>#app{min-height:100vh}</style>
 <meta name="robots" content="noindex, nofollow">
 <script>window.QM_REQUIRE_LOGIN = true;</script>
+<script src="wizard-config.js"></script>
+<script src="wizard-admin.js"></script>
 <script src="config.js"></script>
 <script src="qm-store.js"></script>
 <script src="qm-dc.js"></script>
@@ -318,6 +320,8 @@ var QM_PROPS = {};
       QM.gate.ready = true;
       $('qmLogin').hidden = true; $('app').hidden = false;
       QMDC.mount(Component, QM_TREE, $('app'), QM_PROPS);
+      var wz = document.createElement('div'); wz.style.cssText = 'max-width:1120px;margin:-40px auto 0;padding:0 24px 72px;box-sizing:border-box';
+      $('app').after(wz); if (window.QMWizardAdmin) window.QMWizardAdmin(wz);
       var out = document.createElement('button'); out.type = 'button'; out.className = 'qm-out'; out.textContent = L().out;
       out.onclick = function () { QM.auth.clear(); location.replace(location.pathname); };
       document.body.appendChild(out);

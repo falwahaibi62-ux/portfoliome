@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ابدأ مشروعك | قريب مني</title>
+<meta name="description" content="اختر نوع التطبيق وأهم المهام، واحصل على ملخص ومدة تقديرية لمشروعك.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Outfit:wght@400;500;600;700&family=Amiri:wght@700&display=swap">
+<style>
+  :root{
+    --navy:#1C1633; --violet:#6B4FD8; --pink:#F08BD8; --blue:#8FB8FF; --lav:#B8B2FF;
+    --ink:#1C1633; --muted:#4A4560; --line:#E6E1F5; --soft:#F7F5FC; --card:#FFFFFF;
+    --grad:linear-gradient(100deg,#8FB8FF,#B8B2FF 40%,#F08BD8 80%,#FFB59A);
+    --r-card:24px; --r-pill:999px;
+    --font:'Outfit','Tajawal',Tahoma,sans-serif; --display:'Amiri','Outfit',serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font);color:var(--ink);background:#fff;min-height:100vh;
+    background-image:radial-gradient(55% 45% at 85% 8%,rgba(240,139,216,.18),transparent 70%),radial-gradient(50% 50% at 8% 92%,rgba(143,184,255,.2),transparent 70%)}
+  html[lang=ar] body{font-family:'Tajawal','Outfit',Tahoma,sans-serif}
+  a{color:var(--violet);text-decoration:none}
+  button,input,textarea{font:inherit;color:inherit}
+  :focus-visible{outline:3px solid var(--lav);outline-offset:2px}
+  [hidden]{display:none!important}
+
+  header{padding:14px 16px 0}
+  .nav{max-width:1000px;margin:0 auto;padding:10px 12px 10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    background:rgba(255,255,255,.8);border:1px solid #ECE8F8;border-radius:var(--r-pill);box-shadow:0 10px 30px rgba(107,79,216,.08);backdrop-filter:blur(8px)}
+  html[dir=rtl] .nav{padding:10px 20px 10px 12px}
+  .brand{display:flex;align-items:center;gap:10px;color:var(--ink)}
+  .brand b{font-family:var(--display);font-size:20px;line-height:1}
+  .nav-actions{display:flex;gap:8px;align-items:center}
+  .pill{min-height:44px;padding:0 18px;border-radius:var(--r-pill);border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .pill:hover{border-color:var(--ink)}
+
+  main{max-width:820px;margin:0 auto;padding:36px 16px 72px}
+  .intro{text-align:center;display:grid;gap:10px;margin-bottom:26px}
+  .kicker{color:var(--violet);font-weight:700;font-size:14px}
+  h1{margin:0;font-family:var(--display);font-size:clamp(30px,5vw,44px);line-height:1.3;
+    background:linear-gradient(100deg,#1C1633 0%,#1C1633 45%,#6B4FD8 75%,#E0559F 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .intro p{margin:0;color:var(--muted);font-size:17px;line-height:1.8}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:26px;box-shadow:0 24px 60px -36px rgba(107,79,216,.45)}
+  .progress{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .bar{flex:1;height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:99px;transition:width .4s ease}
+  .count{font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
+
+  .step{animation:in .35s ease both}
+  @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .step h2{margin:0 0 6px;font-size:24px;font-weight:800}
+  .step .hint{margin:0 0 18px;color:var(--muted);font-size:15px;line-height:1.7}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .opt{position:relative;text-align:start;display:flex;gap:12px;align-items:flex-start;min-height:64px;padding:16px;border-radius:20px;border:1.5px solid var(--line);background:#fff;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+  .opt:hover{border-color:var(--lav);transform:translateY(-2px)}
+  .opt[aria-pressed=true],.opt[aria-checked=true]{border-color:var(--violet);background:#F6F3FF}
+  .opt .ic{flex:none;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(143,184,255,.35),rgba(240,139,216,.3));color:var(--navy)}
+  .opt b{display:block;font-size:16px;margin-bottom:3px}
+  .opt span{font-size:13.5px;color:var(--muted);line-height:1.6}
+  .tick{position:absolute;inset-block-start:12px;inset-inline-end:12px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;background:#fff}
+  .opt[aria-pressed=true] .tick,.opt[aria-checked=true] .tick{background:var(--violet);border-color:var(--violet);color:#fff}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{min-height:44px;padding:0 18px;border-radius:var(--r-pill);border:1.5px solid var(--line);background:#fff;cursor:pointer;font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:8px;transition:border-color .2s,background .2s}
+  .chip:hover{border-color:var(--lav)}
+  .chip[aria-checked=true],.chip[aria-pressed=true]{border-color:var(--violet);background:#F6F3FF;color:var(--navy)}
+  .chip[aria-checked=true]::before,.chip[aria-pressed=true]::before{content:"✓";color:var(--violet);font-weight:800}
+  .sub{margin:22px 0 10px;font-size:14px;font-weight:800;color:var(--muted)}
+
+  .fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .fields .wide{grid-column:1/-1}
+  label.f{display:grid;gap:6px;font-size:14px;font-weight:700}
+  .f input,.f textarea{width:100%;min-height:48px;padding:10px 14px;border-radius:16px;border:1px solid #D8D1EE;background:#FBFAFE;font-size:15px}
+  .f textarea{min-height:96px;resize:vertical;line-height:1.7}
+  .phone{display:flex;direction:ltr}
+  .phone span{display:flex;align-items:center;padding:0 12px;border:1px solid #D8D1EE;border-right:0;border-radius:16px 0 0 16px;background:var(--soft);font-weight:700;color:var(--muted)}
+  .phone input{border-radius:0 16px 16px 0!important}
+  .err{color:#A3165B;font-size:13.5px;min-height:1.2em;margin-top:10px}
+
+  .actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:26px;flex-wrap:wrap}
+  .btn{min-height:50px;padding:0 28px;border-radius:var(--r-pill);border:0;background:var(--navy);color:#fff;font-weight:700;font-size:16px;cursor:pointer;display:inline-flex;align-items:center;gap:10px}
+  .btn:disabled{opacity:.45;cursor:default}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn.wa{background:#1F7F6C}
+
+  /* الملخص */
+  .sum-head{text-align:center;display:grid;gap:8px;margin-bottom:20px}
+  .sum-head .badge{justify-self:center;padding:6px 14px;border-radius:var(--r-pill);background:#F3F0FF;color:var(--violet);font-weight:700;font-size:13px}
+  .est{margin:4px auto 0;display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:14px 26px;border-radius:20px;background:linear-gradient(120deg,rgba(143,184,255,.22),rgba(240,139,216,.2))}
+  .est small{font-size:12.5px;color:var(--muted);font-weight:700}
+  .est b{font-size:26px;font-family:var(--font)}
+  .sum{display:grid;gap:10px}
+  .row{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:12px 14px;border-radius:16px;background:var(--soft)}
+  .row dt{color:var(--muted);font-weight:700;font-size:14px}
+  .row dd{margin:0;font-size:15px;line-height:1.7}
+  .note{margin:16px 0 0;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
+  .done{text-align:center;display:grid;gap:12px;padding:10px 0}
+
+  @media (max-width:640px){
+    .card{padding:20px}
+    .fields{grid-template-columns:1fr}
+    .row{grid-template-columns:1fr;gap:2px}
+    .actions .btn{flex:1;justify-content:center}
+    .brand b{font-size:18px}
+  }
+  @media (prefers-reduced-motion:reduce){.step{animation:none}.opt,.bar i{transition:none}}
+</style>
+<script src="wizard-config.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="qmg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FB8FF"/><stop offset="0.5" stop-color="#B8B2FF"/><stop offset="1" stop-color="#F08BD8"/></linearGradient></defs></svg>
+<header>
+  <div class="nav">
+    <a class="brand" href="index.html" aria-label="قريب مني">
+      <svg width="36" height="36" viewBox="0 0 100 100" aria-hidden="true"><path d="M86 56V32A20 20 0 0 0 66 12H32A20 20 0 0 0 12 32V68A20 20 0 0 0 32 88H56" fill="none" stroke="url(#qmg)" stroke-width="13" stroke-linecap="round"/><path d="M61 61L72 72" stroke="url(#qmg)" stroke-width="12" stroke-linecap="round"/><rect x="72" y="72" width="22" height="22" rx="6" fill="url(#qmg)"/></svg>
+      <b data-t="brand"></b>
+    </a>
+    <div class="nav-actions">
+      <a class="pill" href="index.html" data-t="back"></a>
+      <button class="pill" type="button" id="langBtn"></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <span class="kicker" data-t="kicker"></span>
+    <h1 data-t="title"></h1>
+    <p data-t="lead"></p>
+  </div>
+  <section class="card" aria-live="polite">
+    <div class="progress" id="progress"><span class="bar"><i id="barFill"></i></span><span class="count" id="count"></span></div>
+    <div id="stage"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var TX = {
+    ar: { brand: 'قريب مني', back: 'الرئيسية', lang: 'English', kicker: 'ابدأ مشروعك', title: 'لنحدّد ما تحتاجه في دقيقتين',
+      lead: 'اختر نوع التطبيق وأهم المهام، وستحصل على ملخص واضح ومدة تقديرية، ثم ترسله لنا مباشرة على واتساب.',
+      stepOf: function (a, b) { return 'الخطوة ' + a + ' من ' + b; },
+      s1: 'ماذا تريد أن تبني؟', s1h: 'اختر الأقرب لفكرتك.',
+      s2: 'ما أهم المهام التي تحتاجها؟', s2h: 'اختر كل ما يناسبك، ويمكنك إضافة غيره بكلماتك.', common: 'أساسيات تهمّ كل مشروع', more: 'مهام أخرى أو وصف الفكرة (اختياري)',
+      s3: 'من سيستخدمه؟', s3h: 'يساعدنا هذا في تحديد الصلاحيات وحجم النظام.',
+      s4: 'الميزانية والموعد', s4h: 'نطاق تقريبي يكفي، ولا يُلزمك بشيء.', budget: 'الميزانية التقريبية', time: 'متى تريد البدء؟',
+      s5: 'بيانات التواصل', s5h: 'لنرسل لك عرضاً مفصّلاً بعد مراجعة طلبك.', name: 'الاسم', mobile: 'رقم الجوال', org: 'اسم الجهة أو المشروع (اختياري)',
+      next: 'التالي', prev: 'السابق', review: 'عرض الملخص',
+      needType: 'اختر نوع التطبيق للمتابعة.', needUsers: 'اختر من سيستخدم التطبيق.', needName: 'اكتب اسمك.', needPhone: 'رقم الجوال العُماني 8 أرقام ويبدأ بـ 7 أو 9.',
+      sumBadge: 'ملخص طلبك', sumTitle: 'جاهز للإرسال', estimate: 'المدة التقديرية للتنفيذ', estUnsure: 'تتحدد بعد الحديث معك',
+      rType: 'نوع التطبيق', rFeatures: 'المهام', rMore: 'تفاصيل إضافية', rUsers: 'المستخدمون', rBudget: 'الميزانية', rTime: 'موعد البدء', rName: 'الاسم', rMobile: 'الجوال', rOrg: 'الجهة',
+      estNote: 'المدة تقديرية حسب اختياراتك، وتتحدد بدقة بعد مكالمة قصيرة نفهم فيها عملك.',
+      send: 'إرسال عبر واتساب', copy: 'نسخ الملخص', copied: 'تم النسخ ✓', edit: 'تعديل الاختيارات',
+      privacy: 'لا نحفظ بياناتك في الموقع؛ يُرسل الملخص مباشرة من جوالك عبر واتساب.',
+      noWa: 'رقم واتساب غير متاح حالياً. انسخ الملخص وأرسله عبر وسيلة التواصل في الصفحة الرئيسية.',
+      waHead: 'مرحباً، أود البدء بمشروع مع قريب مني:', waEnd: 'تم الإرسال من استمارة «ابدأ مشروعك».', manyNote: 'عدد المهام كبير، فقد تزيد المدة قليلاً.' },
+    en: { brand: 'Qareeb Minni', back: 'Home', lang: 'العربية', kicker: 'Start your project', title: 'Let’s scope what you need in two minutes',
+      lead: 'Choose the type of app and the key features. You will get a clear summary and an estimated timeline, then send it to us on WhatsApp.',
+      stepOf: function (a, b) { return 'Step ' + a + ' of ' + b; },
+      s1: 'What do you want to build?', s1h: 'Pick the closest match to your idea.',
+      s2: 'Which features matter most?', s2h: 'Select everything that fits, and add anything else in your own words.', common: 'Basics for every project', more: 'Other features or a description of your idea (optional)',
+      s3: 'Who will use it?', s3h: 'This helps us plan roles and the size of the system.',
+      s4: 'Budget and timing', s4h: 'A rough range is enough, and it does not commit you to anything.', budget: 'Approximate budget', time: 'When do you want to start?',
+      s5: 'Contact details', s5h: 'So we can send you a detailed proposal after reviewing your request.', name: 'Name', mobile: 'Mobile number', org: 'Organisation or project name (optional)',
+      next: 'Next', prev: 'Back', review: 'See summary',
+      needType: 'Choose a type of app to continue.', needUsers: 'Choose who will use the app.', needName: 'Enter your name.', needPhone: 'Omani mobile numbers have 8 digits and start with 7 or 9.',
+      sumBadge: 'Your request', sumTitle: 'Ready to send', estimate: 'Estimated build time', estUnsure: 'Set after we talk',
+      rType: 'Type of app', rFeatures: 'Features', rMore: 'More details', rUsers: 'Users', rBudget: 'Budget', rTime: 'Start', rName: 'Name', rMobile: 'Mobile', rOrg: 'Organisation',
+      estNote: 'The timeline is an estimate based on your choices and is confirmed after a short call about your work.',
+      send: 'Send on WhatsApp', copy: 'Copy summary', copied: 'Copied ✓', edit: 'Edit choices',
+      privacy: 'We do not store your details on this site; the summary is sent from your phone through WhatsApp.',
+      noWa: 'WhatsApp is not available right now. Copy the summary and send it through a contact method on the home page.',
+      waHead: 'Hello, I would like to start a project with Qareeb Minni:', waEnd: 'Sent from the “Start your project” form.', manyNote: 'You chose many features, so the timeline may be a little longer.' }
+  };
+  var ICONS = {
+    web: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/><circle cx="7" cy="6.5" r=".6"/>',
+    flow: '<rect x="3" y="3" width="7" height="6" rx="2"/><rect x="14" y="15" width="7" height="6" rx="2"/><path d="M6.5 9v3a3 3 0 0 0 3 3h4.5"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    bag: '<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+    phone: '<rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 18h2"/>',
+    spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>'
+  };
+
+  var D = window.QM_WIZARD_DEFAULTS, W = JSON.parse(JSON.stringify(D)), waNumber = '';
+  var lang = 'ar'; try { if (localStorage.getItem('qm-pf-lang') === 'en') lang = 'en'; } catch (e) {}
+  var S = { step: 1, type: '', features: [], more: '', users: '', budget: '', time: '', name: '', phone: '', org: '' };
+  var TOTAL = 5;
+  var $ = function (id) { return document.getElementById(id); };
+  var L = function () { return TX[lang]; };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var typeOf = function (id) { return W.types.filter(function (t) { return t.id === id; })[0]; };
+  var pick = function (o, k) { return o[k + (lang === 'en' ? 'En' : 'Ar')] || o[k + 'Ar'] || []; };
+
+  // المحتوى من لوحة التحكم: خيارات الاستمارة ورقم واتساب
+  fetch('data/portfolio.json?t=' + Math.floor(Date.now() / 60000), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+    if (!d || !d.settings) return;
+    var w = d.settings.wizard;
+    if (w && Array.isArray(w.types)) {
+      W.types = D.types.map(function (t) { var o = w.types.filter(function (x) { return x.id === t.id; })[0]; return o ? Object.assign({}, t, o) : t; });
+      ['budgetsAr', 'budgetsEn'].forEach(function (k) { if (Array.isArray(w[k]) && w[k].length) W[k] = w[k]; });
+    }
+    var items = d.settings.contact && Array.isArray(d.settings.contact.items) ? d.settings.contact.items : [];
+    var wa = items.filter(function (i) { return i.type === 'whatsapp' && i.enabled !== false && i.value; })[0];
+    waNumber = wa ? String(wa.value).replace(/\D/g, '') : '';
+    render();
+  }).catch(function () {});
+
+  function paintStatic() {
+    document.documentElement.lang = lang; document.documentElement.dir = lang === 'en' ? 'ltr' : 'rtl';
+    document.title = L().kicker + ' | ' + L().brand;
+    document.querySelectorAll('[data-t]').forEach(function (e) { e.textContent = L()[e.dataset.t]; });
+    $('langBtn').textContent = L().lang;
+  }
+  $('langBtn').onclick = function () { lang = lang === 'ar' ? 'en' : 'ar'; try { localStorage.setItem('qm-pf-lang', lang); } catch (e) {} paintStatic(); render(); };
+
+  function optCard(id, title, desc, icon, selected, role) {
+    return '<button type="button" class="opt" data-v="' + esc(id) + '" ' + (role === 'radio' ? 'role="radio" aria-checked="' + selected + '"' : 'aria-pressed="' + selected + '"') + '>' +
+      (icon ? '<span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[icon] + '</svg></span>' : '') +
+      '<span><b>' + esc(title) + '</b>' + (desc ? '<span>' + esc(desc) + '</span>' : '') + '</span><span class="tick" aria-hidden="true">' + (selected ? '✓' : '') + '</span></button>';
+  }
+  function chips(list, current, multi, group) {
+    return '<div class="chips" role="' + (multi ? 'group' : 'radiogroup') + '">' + list.map(function (v) {
+      var on = multi ? current.indexOf(v) >= 0 : current === v;
+      return '<button type="button" class="chip" data-g="' + group + '" data-v="' + esc(v) + '" ' + (multi ? 'aria-pressed="' + on + '"' : 'role="radio" aria-checked="' + on + '"') + '>' + esc(v) + '</button>';
+    }).join('') + '</div>';
+  }
+  function actions(nextLabel) {
+    return '<div class="err" id="err" role="alert"></div><div class="actions">' +
+      (S.step > 1 ? '<button type="button" class="btn ghost" id="prev">' + esc(L().prev) + '</button>' : '<span></span>') +
+      '<button type="button" class="btn" id="next">' + esc(nextLabel || L().next) + '</button></div>';
+  }
+
+  function render() {
+    var l = L(), html = '', st = S.step;
+    var showProg = st <= TOTAL;
+    $('progress').hidden = !showProg;
+    if (showProg) { $('barFill').style.width = (st / TOTAL * 100) + '%'; $('count').textContent = l.stepOf(st, TOTAL); }
+
+    if (st === 1) {
+      html = '<h2>' + esc(l.s1) + '</h2><p class="hint">' + esc(l.s1h) + '</p><div class="grid" role="radiogroup">' +
+        W.types.map(function (t) { return optCard(t.id, t[lang], lang === 'en' ? t.descEn : t.descAr, t.icon, S.type === t.id, 'radio'); }).join('') + '</div>' + actions();
+    } else if (st === 2) {
+      var t = typeOf(S.type), fs = pick(t, 'features'), cm = pick(W, 'common');
+      html = '<h2>' + esc(l.s2) + '</h2><p class="hint">' + esc(l.s2h) + '</p>' +
+        (fs.length ? chips(fs, S.features, true, 'f') : '') +
+        '<div class="sub">' + esc(l.common) + '</div>' + chips(cm, S.features, true, 'f') +
+        '<label class="f" style="margin-top:20px"><span>' + esc(l.more) + '</span><textarea id="more" maxlength="500" dir="auto">' + esc(S.more) + '</textarea></label>' + actions();
+    } else if (st === 3) {
+      html = '<h2>' + esc(l.s3) + '</h2><p class="hint">' + esc(l.s3h) + '</p>' + chips(pick(W, 'users'), S.users, false, 'u') + actions();
+    } else if (st === 4) {
+      html = '<h2>' + esc(l.s4) + '</h2><p class="hint">' + esc(l.s4h) + '</p><div class="sub">' + esc(l.budget) + '</div>' + chips(pick(W, 'budgets'), S.budget, false, 'b') +
+        '<div class="sub">' + esc(l.time) + '</div>' + chips(pick(W, 'times'), S.time, false, 't') + actions();
+    } else if (st === 5) {
+      html = '<h2>' + esc(l.s5) + '</h2><p class="hint">' + esc(l.s5h) + '</p><div class="fields">' +
+        '<label class="f"><span>' + esc(l.name) + '</span><input id="name" maxlength="80" autocomplete="name" dir="auto" value="' + esc(S.name) + '"></label>' +
+        '<label class="f"><span>' + esc(l.mobile) + '</span><span class="phone"><span>+968</span><input id="phone" inputmode="numeric" maxlength="8" autocomplete="tel-national" placeholder="9XXXXXXX" value="' + esc(S.phone) + '"></span></label>' +
+        '<label class="f wide"><span>' + esc(l.org) + '</span><input id="org" maxlength="100" dir="auto" value="' + esc(S.org) + '"></label></div>' + actions(l.review);
+    } else {
+      html = summary();
+    }
+    var stage = $('stage'); stage.innerHTML = '<div class="step">' + html + '</div>';
+    bind();
+  }
+
+  function summaryRows() {
+    var l = L(), t = typeOf(S.type);
+    return [[l.rType, t ? t[lang] : ''], [l.rFeatures, S.features.join('، ')], [l.rMore, S.more], [l.rUsers, S.users], [l.rBudget, S.budget], [l.rTime, S.time],
+      [l.rName, S.name], [l.rMobile, S.phone ? '+968 ' + S.phone : ''], [l.rOrg, S.org]].filter(function (r) { return r[1]; });
+  }
+  function estimate() { var t = typeOf(S.type); return t ? (lang === 'en' ? t.durationEn : t.durationAr) : ''; }
+  function summary() {
+    var l = L(), est = estimate();
+    return '<div class="sum-head"><span class="badge">' + esc(l.sumBadge) + '</span><h2 style="margin:0;font-size:26px">' + esc(l.sumTitle) + '</h2>' +
+      '<div><span class="est"><small>' + esc(l.estimate) + '</small><b dir="auto">' + esc(est || l.estUnsure) + '</b></span></div></div>' +
+      '<dl class="sum">' + summaryRows().map(function (r) { return '<div class="row"><dt>' + esc(r[0]) + '</dt><dd dir="auto">' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' +
+      '<p class="note">' + esc(l.estNote) + (S.features.length > 7 ? ' ' + esc(l.manyNote) : '') + '</p>' +
+      '<div class="actions"><button type="button" class="btn ghost" id="editBtn">' + esc(l.edit) + '</button><span style="display:flex;gap:10px;flex-wrap:wrap">' +
+      '<button type="button" class="btn ghost" id="copyBtn">' + esc(l.copy) + '</button>' +
+      (waNumber ? '<a class="btn wa" id="waBtn" target="_blank" rel="noopener" href="' + esc(waLink()) + '">' + esc(l.send) + '</a>' : '') + '</span></div>' +
+      '<p class="note">' + esc(waNumber ? l.privacy : l.noWa) + '</p>';
+  }
+  function messageText() {
+    var l = L(), est = estimate();
+    var lines = [l.waHead, ''].concat(summaryRows().map(function (r) { return '• ' + r[0] + ': ' + r[1]; }));
+    if (est) lines.push('• ' + l.estimate + ': ' + est);
+    lines.push('', l.waEnd);
+    return lines.join('\n');
+  }
+  function waLink() { return 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(messageText()); }
+
+  function bind() {
+    var st = S.step;
+    document.querySelectorAll('#stage .opt').forEach(function (b) {
+      b.onclick = function () { if (S.type !== b.dataset.v) S.features = []; S.type = b.dataset.v; render(); };
+    });
+    document.querySelectorAll('#stage .chip').forEach(function (b) {
+      b.onclick = function () {
+        var v = b.dataset.v, g = b.dataset.g;
+        if (g === 'f') { var i = S.features.indexOf(v); if (i >= 0) S.features.splice(i, 1); else S.features.push(v); b.setAttribute('aria-pressed', String(i < 0)); return; }
+        var key = { u: 'users', b: 'budget', t: 'time' }[g]; S[key] = S[key] === v ? '' : v;
+        b.parentNode.querySelectorAll('.chip').forEach(function (c) { c.setAttribute('aria-checked', String(c.dataset.v === S[key])); });
+      };
+    });
+    if ($('more')) $('more').oninput = function (e) { S.more = e.target.value; };
+    if ($('name')) $('name').oninput = function (e) { S.name = e.target.value; };
+    if ($('org')) $('org').oninput = function (e) { S.org = e.target.value; };
+    if ($('phone')) $('phone').oninput = function (e) { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 8); S.phone = e.target.value; };
+    if ($('prev')) $('prev').onclick = function () { S.step = (S.step === 3 && S.type === 'unsure') ? 1 : S.step - 1; render(); top(); };
+    if ($('next')) $('next').onclick = function () {
+      var l = L(), err = $('err');
+      if (st === 1 && !S.type) { err.textContent = l.needType; return; }
+      if (st === 3 && !S.users) { err.textContent = l.needUsers; return; }
+      if (st === 5) {
+        S.name = $('name').value.trim(); S.org = $('org').value.trim();
+        if (S.name.length < 2) { err.textContent = l.needName; return; }
+        if (!/^[79]\d{7}$/.test(S.phone)) { err.textContent = l.needPhone; return; }
+      }
+      if (st === 1 && S.type === 'unsure') S.step = 3; else S.step++;
+      render(); top();
+    };
+    if ($('editBtn')) $('editBtn').onclick = function () { S.step = 1; render(); top(); };
+    if ($('copyBtn')) $('copyBtn').onclick = function () {
+      var b = $('copyBtn'), txt = messageText();
+      var ok = function () { b.textContent = L().copied; setTimeout(function () { if (b.isConnected) b.textContent = L().copy; }, 1800); };
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(ok, function () {}); else { var ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch (e) {} ta.remove(); }
+    };
+  }
+  function top() { var c = document.querySelector('.card'); if (c && c.getBoundingClientRect().top < 0) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+  paintStatic(); render();
+})();
+</script>
+</body>
+</html>
