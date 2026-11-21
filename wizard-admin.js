@@ -5,9 +5,11 @@ window.QMWizardAdmin = function (host) {
   var D = window.QM_WIZARD_DEFAULTS;
   var TX = {
     ar: { title: 'استمارة «ابدأ مشروعك»', hint: 'عدّلي المدة التقديرية والمهام التي تظهر للعميل لكل نوع تطبيق. اكتبي كل مهمة في سطر.', open: 'فتح الاستمارة',
-      dur: 'المدة التقديرية', feat: 'المهام', ar: '(عربي)', en: '(English)', budgets: 'خيارات «أين أنت الآن؟»', save: 'حفظ الاستمارة', saving: 'جارٍ الحفظ…', saved: 'تم الحفظ، والاستمارة تحدّثت.', fail: 'تعذّر الحفظ. حاولي مرة أخرى.', reset: 'استرجاع الافتراضي' },
+      dur: 'المدة التقديرية', feat: 'المهام', ar: '(عربي)', en: '(English)', budgets: 'خيارات «أين أنت الآن؟»', save: 'حفظ الاستمارة', saving: 'جارٍ الحفظ…', saved: 'تم الحفظ، والاستمارة تحدّثت.', fail: 'تعذّر الحفظ. حاولي مرة أخرى.', reset: 'استرجاع الافتراضي',
+      key: 'مفتاح الإرسال (Web3Forms Access Key)', keyHint: 'تصل الطلبات إلى بريدك. أنشئي المفتاح مجاناً من web3forms.com بإدخال بريدك، ثم الصقيه هنا. بدونه يُرسل الطلب عبر واتساب.' },
     en: { title: '“Start your project” form', hint: 'Edit the estimated time and the features clients see for each app type. One feature per line.', open: 'Open the form',
-      dur: 'Estimated time', feat: 'Features', ar: '(Arabic)', en: '(English)', budgets: '“Where are you now?” options', save: 'Save form', saving: 'Saving…', saved: 'Saved. The form is updated.', fail: 'Could not save. Please try again.', reset: 'Restore defaults' }
+      dur: 'Estimated time', feat: 'Features', ar: '(Arabic)', en: '(English)', budgets: '“Where are you now?” options', save: 'Save form', saving: 'Saving…', saved: 'Saved. The form is updated.', fail: 'Could not save. Please try again.', reset: 'Restore defaults',
+      key: 'Sending key (Web3Forms Access Key)', keyHint: 'Requests arrive in your inbox. Create a free key at web3forms.com with your email, then paste it here. Without it, requests are sent through WhatsApp.' }
   };
   var state = null, db = null, msg = '', msgOk = true, busy = false;
   var lang = function () { var r = document.querySelector('#app > div'); return r && r.getAttribute('lang') === 'en' ? 'en' : 'ar'; };
@@ -20,6 +22,7 @@ window.QMWizardAdmin = function (host) {
       o = Object.assign({}, t, o || {});
       return { id: t.id, ar: t.ar, en: t.en, durationAr: o.durationAr, durationEn: o.durationEn, featuresAr: (o.featuresAr || []).join('\n'), featuresEn: (o.featuresEn || []).join('\n') };
     }) };
+    st.formKey = (w && w.formKey) || '';
     st.stagesAr = ((w && w.stagesAr) || D.stagesAr).join('\n');
     st.stagesEn = ((w && w.stagesEn) || D.stagesEn).join('\n');
     return st;
@@ -47,6 +50,7 @@ window.QMWizardAdmin = function (host) {
         '<label style="' + lab + '">' + esc(L.feat + ' ' + L.en) + '<textarea data-i="' + i + '" data-k="featuresEn" style="' + ta + '" dir="ltr">' + esc(t.featuresEn) + '</textarea></label>' +
         '</div></details>';
     });
+    h += '<label style="' + lab + '">' + esc(L.key) + '<input data-k="formKey" style="' + inp + '" dir="ltr" autocomplete="off" spellcheck="false" value="' + esc(state.formKey) + '"><span style="font-weight:500;color:#4A4560;line-height:1.7">' + esc(L.keyHint) + ' <a href="https://web3forms.com" target="_blank" rel="noopener" style="color:#6B4FD8">web3forms.com</a></span></label>';
     h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">' +
       '<label style="' + lab + '">' + esc(L.budgets + ' ' + L.ar) + '<textarea data-k="stagesAr" style="' + ta + '" dir="rtl">' + esc(state.stagesAr) + '</textarea></label>' +
       '<label style="' + lab + '">' + esc(L.budgets + ' ' + L.en) + '<textarea data-k="stagesEn" style="' + ta + '" dir="ltr">' + esc(state.stagesEn) + '</textarea></label></div>' +
@@ -58,7 +62,7 @@ window.QMWizardAdmin = function (host) {
     host.querySelectorAll('[data-k]').forEach(function (el) {
       el.addEventListener('input', function () { var i = el.dataset.i; if (i != null) state.types[i][el.dataset.k] = el.value; else state[el.dataset.k] = el.value; });
     });
-    host.querySelector('#wzReset').onclick = function () { state = fromSaved(null); msg = ''; render(); };
+    host.querySelector('#wzReset').onclick = function () { var k = state.formKey; state = fromSaved(null); state.formKey = k; msg = ''; render(); };
     host.querySelector('#wzSave').onclick = save;
   }
 
@@ -68,7 +72,7 @@ window.QMWizardAdmin = function (host) {
     busy = true; msg = ''; render();
     var data = {
       types: state.types.map(function (t) { return { id: t.id, durationAr: t.durationAr.trim(), durationEn: t.durationEn.trim(), featuresAr: lines(t.featuresAr), featuresEn: lines(t.featuresEn) }; }),
-      stagesAr: lines(state.stagesAr), stagesEn: lines(state.stagesEn), updatedAt: new Date().toISOString()
+      formKey: String(state.formKey || '').trim(), stagesAr: lines(state.stagesAr), stagesEn: lines(state.stagesEn), updatedAt: new Date().toISOString()
     };
     db.doc('settings/wizard').set(data).then(function () { busy = false; msg = L.saved; msgOk = true; render(); },
       function () { busy = false; msg = L.fail; msgOk = false; render(); });

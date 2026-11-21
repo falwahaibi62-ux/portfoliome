@@ -95,7 +95,8 @@
   .row dt{color:var(--muted);font-weight:700;font-size:14px}
   .row dd{margin:0;font-size:15px;line-height:1.7}
   .note{margin:16px 0 0;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
-  .done{text-align:center;display:grid;gap:12px;padding:10px 0}
+  .done{text-align:center;display:grid;gap:14px;padding:18px 0;justify-items:center}
+  .ok-ic{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#8FB8FF,#6B4FD8 55%,#F08BD8);box-shadow:0 14px 30px -12px rgba(107,79,216,.6)}
 
   @media (max-width:640px){
     .card{padding:20px}
@@ -133,6 +134,7 @@
     <div class="progress" id="progress"><span class="bar"><i id="barFill"></i></span><span class="count" id="count"></span></div>
     <div id="stage"></div>
   </section>
+  <p class="note"><a href="terms.html" data-t="termsLink"></a></p>
 </main>
 
 <script>
@@ -140,7 +142,7 @@
   'use strict';
   var TX = {
     ar: { brand: 'قريب مني', back: 'الرئيسية', lang: 'English', kicker: 'ابدأ مشروعك', title: 'لنحدّد ما تحتاجه في دقيقتين',
-      lead: 'اختر نوع التطبيق وأهم المهام، وستحصل على ملخص واضح ومدة تقديرية، ثم ترسله لنا مباشرة على واتساب.',
+      lead: 'اختر نوع التطبيق وأهم المهام، وستحصل على ملخص واضح ومدة تقديرية، ثم ترسله لنا مباشرة.',
       stepOf: function (a, b) { return 'الخطوة ' + a + ' من ' + b; },
       s1: 'ماذا تريد أن تبني؟', s1h: 'اختر الأقرب لفكرتك.',
       s2: 'ما أهم المهام التي تحتاجها؟', s2h: 'اختر كل ما يناسبك، ويمكنك إضافة غيره بكلماتك.', common: 'أساسيات تهمّ كل مشروع', more: 'مهام أخرى أو وصف الفكرة (اختياري)',
@@ -152,12 +154,15 @@
       sumBadge: 'ملخص طلبك', sumTitle: 'جاهز للإرسال', estimate: 'المدة التقديرية للتنفيذ', estUnsure: 'تتحدد بعد الحديث معك',
       rType: 'نوع التطبيق', rFeatures: 'المهام', rMore: 'تفاصيل إضافية', rUsers: 'المستخدمون', rBudget: 'الوضع الحالي', rTime: 'موعد البدء', rName: 'الاسم', rMobile: 'الجوال', rOrg: 'الجهة',
       estNote: 'المدة تقديرية حسب اختياراتك، وتتحدد بدقة بعد مكالمة قصيرة نفهم فيها عملك.',
-      send: 'إرسال عبر واتساب', copy: 'نسخ الملخص', copied: 'تم النسخ ✓', edit: 'تعديل الاختيارات',
-      privacy: 'لا نحفظ بياناتك في الموقع؛ يُرسل الملخص مباشرة من جوالك عبر واتساب.',
-      noWa: 'رقم واتساب غير متاح حالياً. انسخ الملخص وأرسله عبر وسيلة التواصل في الصفحة الرئيسية.',
+      send: 'إرسال الطلب', sending: 'جارٍ الإرسال…', sendWa: 'إرسال عبر واتساب', edit: 'تعديل الاختيارات',
+      termsLink: 'الشروط والخصوصية', agree: 'بإرسال الطلب توافق على',
+      privacy: 'يصل طلبك إلى بريدنا مباشرة، ولا يُحفظ في الموقع.', privacyWa: 'يُرسل طلبك من جوالك عبر واتساب، ولا يُحفظ في الموقع.',
+      noSend: 'الإرسال غير متاح حالياً. تواصل معنا عبر وسائل التواصل في الصفحة الرئيسية.',
+      sendFail: 'تعذّر إرسال الطلب. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.',
+      doneTitle: 'تم إرسال طلبك بنجاح', doneText: function (p) { return 'شكراً لك. سنراجع طلبك ونتواصل معك على الرقم ' + p + ' خلال يومي عمل.'; }, home: 'العودة إلى الرئيسية', subject: 'طلب مشروع جديد',
       waHead: 'مرحباً، أود البدء بمشروع مع قريب مني:', waEnd: 'تم الإرسال من استمارة «ابدأ مشروعك».', manyNote: 'عدد المهام كبير، فقد تزيد المدة قليلاً.' },
     en: { brand: 'Qareeb Minni', back: 'Home', lang: 'العربية', kicker: 'Start your project', title: 'Let’s scope what you need in two minutes',
-      lead: 'Choose the type of app and the key features. You will get a clear summary and an estimated timeline, then send it to us on WhatsApp.',
+      lead: 'Choose the type of app and the key features. You will get a clear summary and an estimated timeline, then send it to us directly.',
       stepOf: function (a, b) { return 'Step ' + a + ' of ' + b; },
       s1: 'What do you want to build?', s1h: 'Pick the closest match to your idea.',
       s2: 'Which features matter most?', s2h: 'Select everything that fits, and add anything else in your own words.', common: 'Basics for every project', more: 'Other features or a description of your idea (optional)',
@@ -169,9 +174,12 @@
       sumBadge: 'Your request', sumTitle: 'Ready to send', estimate: 'Estimated build time', estUnsure: 'Set after we talk',
       rType: 'Type of app', rFeatures: 'Features', rMore: 'More details', rUsers: 'Users', rBudget: 'Current setup', rTime: 'Start', rName: 'Name', rMobile: 'Mobile', rOrg: 'Organisation',
       estNote: 'The timeline is an estimate based on your choices and is confirmed after a short call about your work.',
-      send: 'Send on WhatsApp', copy: 'Copy summary', copied: 'Copied ✓', edit: 'Edit choices',
-      privacy: 'We do not store your details on this site; the summary is sent from your phone through WhatsApp.',
-      noWa: 'WhatsApp is not available right now. Copy the summary and send it through a contact method on the home page.',
+      send: 'Send', sending: 'Sending…', sendWa: 'Send on WhatsApp', edit: 'Edit choices',
+      termsLink: 'Terms & privacy', agree: 'By sending, you agree to the',
+      privacy: 'Your request goes straight to our inbox and is not stored on this site.', privacyWa: 'Your request is sent from your phone through WhatsApp and is not stored on this site.',
+      noSend: 'Sending is not available right now. Please reach us through the contact options on the home page.',
+      sendFail: 'We could not send your request. Check your connection and try again.',
+      doneTitle: 'Your request was sent', doneText: function (p) { return 'Thank you. We will review your request and contact you on ' + p + ' within two working days.'; }, home: 'Back to home', subject: 'New project request',
       waHead: 'Hello, I would like to start a project with Qareeb Minni:', waEnd: 'Sent from the “Start your project” form.', manyNote: 'You chose many features, so the timeline may be a little longer.' }
   };
   var ICONS = {
@@ -183,7 +191,7 @@
     spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>'
   };
 
-  var D = window.QM_WIZARD_DEFAULTS, W = JSON.parse(JSON.stringify(D)), waNumber = '';
+  var D = window.QM_WIZARD_DEFAULTS, W = JSON.parse(JSON.stringify(D)), waNumber = '', formKey = '', sending = false;
   var lang = 'ar'; try { if (localStorage.getItem('qm-pf-lang') === 'en') lang = 'en'; } catch (e) {}
   var S = { step: 1, type: '', features: [], more: '', users: '', budget: '', time: '', name: '', phone: '', org: '' };
   var TOTAL = 5;
@@ -200,6 +208,8 @@
     if (w && Array.isArray(w.types)) {
       W.types = D.types.map(function (t) { var o = w.types.filter(function (x) { return x.id === t.id; })[0]; return o ? Object.assign({}, t, o) : t; });
       ['stagesAr', 'stagesEn'].forEach(function (k) { if (Array.isArray(w[k]) && w[k].length) W[k] = w[k]; });
+    }
+    if (w && typeof w.formKey === 'string') { formKey = w.formKey.trim();
     }
     var items = d.settings.contact && Array.isArray(d.settings.contact.items) ? d.settings.contact.items : [];
     var wa = items.filter(function (i) { return i.type === 'whatsapp' && i.enabled !== false && i.value; })[0];
@@ -257,6 +267,10 @@
         '<label class="f"><span>' + esc(l.name) + '</span><input id="name" maxlength="80" autocomplete="name" dir="auto" value="' + esc(S.name) + '"></label>' +
         '<label class="f"><span>' + esc(l.mobile) + '</span><span class="phone"><span>+968</span><input id="phone" inputmode="numeric" maxlength="8" autocomplete="tel-national" placeholder="9XXXXXXX" value="' + esc(S.phone) + '"></span></label>' +
         '<label class="f wide"><span>' + esc(l.org) + '</span><input id="org" maxlength="100" dir="auto" value="' + esc(S.org) + '"></label></div>' + actions(l.review);
+    } else if (st === 7) {
+      html = '<div class="done"><span class="ok-ic" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>' +
+        '<h2 style="margin:0;font-size:26px">' + esc(l.doneTitle) + '</h2><p class="hint" style="margin:0">' + esc(l.doneText('+968 ' + S.phone)) + '</p>' +
+        '<div><a class="btn" href="index.html">' + esc(l.home) + '</a></div></div>';
     } else {
       html = summary();
     }
@@ -276,10 +290,11 @@
       '<div><span class="est"><small>' + esc(l.estimate) + '</small><b dir="auto">' + esc(est || l.estUnsure) + '</b></span></div></div>' +
       '<dl class="sum">' + summaryRows().map(function (r) { return '<div class="row"><dt>' + esc(r[0]) + '</dt><dd dir="auto">' + esc(r[1]) + '</dd></div>'; }).join('') + '</dl>' +
       '<p class="note">' + esc(l.estNote) + (S.features.length > 7 ? ' ' + esc(l.manyNote) : '') + '</p>' +
-      '<div class="actions"><button type="button" class="btn ghost" id="editBtn">' + esc(l.edit) + '</button><span style="display:flex;gap:10px;flex-wrap:wrap">' +
-      '<button type="button" class="btn ghost" id="copyBtn">' + esc(l.copy) + '</button>' +
-      (waNumber ? '<a class="btn wa" id="waBtn" target="_blank" rel="noopener" href="' + esc(waLink()) + '">' + esc(l.send) + '</a>' : '') + '</span></div>' +
-      '<p class="note">' + esc(waNumber ? l.privacy : l.noWa) + '</p>';
+      '<div class="err" id="err" role="alert"></div>' +
+      '<div class="actions"><button type="button" class="btn ghost" id="editBtn">' + esc(l.edit) + '</button>' +
+      (formKey ? '<button type="button" class="btn" id="sendBtn"' + (sending ? ' disabled' : '') + '>' + esc(sending ? l.sending : l.send) + '</button>'
+        : waNumber ? '<a class="btn wa" id="waBtn" target="_blank" rel="noopener" href="' + esc(waLink()) + '">' + esc(l.sendWa) + '</a>' : '') + '</div>' +
+      '<p class="note">' + (formKey || waNumber ? esc(formKey ? l.privacy : l.privacyWa) + ' ' + esc(l.agree) + ' <a href="terms.html" target="_blank" rel="noopener">' + esc(l.termsLink) + '</a>.' : esc(l.noSend)) + '</p>';
   }
   function messageText() {
     var l = L(), est = estimate();
@@ -321,11 +336,18 @@
       render(); top();
     };
     if ($('editBtn')) $('editBtn').onclick = function () { S.step = 1; render(); top(); };
-    if ($('copyBtn')) $('copyBtn').onclick = function () {
-      var b = $('copyBtn'), txt = messageText();
-      var ok = function () { b.textContent = L().copied; setTimeout(function () { if (b.isConnected) b.textContent = L().copy; }, 1800); };
-      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(ok, function () {}); else { var ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); ok(); } catch (e) {} ta.remove(); }
-    };
+    if ($('waBtn')) $('waBtn').onclick = function () { setTimeout(function () { S.step = 7; render(); top(); }, 400); };
+    if ($('sendBtn')) $('sendBtn').onclick = send;
+  }
+  function send() {
+    if (sending || !formKey) return;
+    var l = L(); sending = true; render();
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ access_key: formKey, subject: l.subject + ' — ' + S.name, from_name: S.name, name: S.name, phone: '+968 ' + S.phone, message: messageText(), botcheck: '' })
+    }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.success) throw new Error('fail'); }); })
+      .then(function () { sending = false; S.step = 7; render(); top(); },
+        function () { sending = false; render(); var e = $('err'); if (e) e.textContent = l.sendFail; });
   }
   function top() { var c = document.querySelector('.card'); if (c && c.getBoundingClientRect().top < 0) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 
